@@ -35,9 +35,13 @@ requirements:
   build:
     - python
     - setuptools
+    - numpy
+    - scipy
 
   run:
     - python
+    - numpy
+    - scipy
     # - numpy
     # - pyqt 4.11.*
 
