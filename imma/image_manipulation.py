@@ -435,7 +435,7 @@ def max_area_index(labels, num):
     return mxi
 
 
-def resize_to_shape(data, shape, zoom=None, mode='nearest', order=0):
+def resize_to_shape(data, shape, zoom=None, mode='reflect', order=0):
     """Resize input data to specific shape.
 
     :param data: input 3d array-like data
@@ -458,13 +458,15 @@ def resize_to_shape(data, shape, zoom=None, mode='nearest', order=0):
 
         segm_orig_scale = skimage.transform.resize(
             data, shape, order=order,
-            preserve_range=True
+            preserve_range=True,
+            mode=mode,
         )
 
         segmentation = segm_orig_scale
         logger.debug('resize to orig with skimage')
     except Exception:
         logger.warning("Resize by scipy will be removed in the future")
+        mode = 'nearest'
         import scipy
         import scipy.ndimage
         dtype = data.dtype
