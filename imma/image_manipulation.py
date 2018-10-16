@@ -504,7 +504,7 @@ def resize_to_shape(data, shape, zoom=None, mode='reflect', order=0):
     return segmentation
 
 
-def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='edge', order=1):
+def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1):
     """
     Function can resize data3d or segmentation to specifed voxelsize_mm
     :new_voxelsize_mm: requested voxelsize. List of 3 numbers, also
