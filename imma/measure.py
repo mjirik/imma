@@ -11,12 +11,12 @@ from scipy.sparse import csc_matrix
 
 
 class CooccurrenceMatrix(object):
-    def __init__(self, data, dtype=int):
-        self.update_cooccurrence_matrix(data)
+    def __init__(self, data, return_counts=True, dtype=int):
+        self.update_cooccurrence_matrix(data, return_counts=return_counts)
         self.dtype = dtype
 
-    def update_cooccurrence_matrix(self, data):
-        self.cooccurrence_matrix = cooccurrence_matrix(data)
+    def update_cooccurrence_matrix(self, data, return_counts=True):
+        self.cooccurrence_matrix = cooccurrence_matrix(data, return_counts=return_counts)
 
     def get(self, intensity0, intensity1):
         return self.cooccurrence_matrix[intensity0][intensity1]
@@ -42,8 +42,8 @@ class CooccurrenceMatrix(object):
         return dict(zip(keys, ii))
 
 
-def cooccurrence_matrix(data):
-    csc_matrix((3, 4), dtype=np.int8).toarray()
+def cooccurrence_matrix(data, return_counts=True):
+    # csc_matrix((3, 4), dtype=np.int8).toarray()
 
     nbm = {}
     it = np.nditer(data, flags=['multi_index'])
@@ -71,6 +71,10 @@ def cooccurrence_matrix(data):
                     nbm[data_value0s] = {}
                 if data_value1s not in nbm[data_value0s].keys():
                     nbm[data_value0s][data_value1s] = 0
+                elif not return_counts:
+                    # make it faster
+                    continue
+
                 nbm[data_value0s][data_value1s] += 1
 
                 if data_value1s not in nbm.keys():

@@ -75,6 +75,25 @@ class MeasurementTest(unittest.TestCase):
         six2zero_1 = nbm.get(6, 0)
         self.assertEqual(six2zero_0, six2zero_1, "# 6 is neighboor of 0 ")
 
+    def test_neigh_matrix_obj_not_return_counts(self):
+        data = np.zeros((3, 4), dtype=int)
+        data[:3, 1] = 1
+        data[2:, 2] = 2
+        data[0, 1:] = 3
+        #
+        nbm = imma.measure.CooccurrenceMatrix(data, return_counts=False)
+        ndn = nbm.to_ndarray()
+        sum = np.sum(ndn)
+        self.assertLessEqual(np.max(ndn), 2)
+        sh = data.shape
+        # number_of_vertical_edges = 2 * 4
+        # number_of_horizontal_edges = 3 * 3
+        # self.assertEqual(sum, (number_of_horizontal_edges + number_of_vertical_edges) * 2)
+        keys = nbm.keys()
+        self.assertIn(0, keys)
+        self.assertIn(1, keys)
+        self.assertIn(2, keys)
+
 
 if __name__ == "__main__":
     unittest.main()
