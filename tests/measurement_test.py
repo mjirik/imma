@@ -20,7 +20,7 @@ class MeasurementTest(unittest.TestCase):
         data[0, 1:] = 3
 
         import imma.measure
-        nbm = imma.measure.neighboor_matrix(data)
+        nbm = imma.measure.cooccurrence_matrix(data)
         nbm[1][0]
         self.assertEqual(nbm[1][0], nbm[0][1])
         self.assertEqual(nbm[3][0], nbm[0][3])
@@ -31,7 +31,7 @@ class MeasurementTest(unittest.TestCase):
         data[2:, 2] = 2
         data[0, 1:] = 3
         #
-        nbm = imma.measure.NeighboorMatrix(data)
+        nbm = imma.measure.CooccurrenceMatrix(data)
         ndn = nbm.to_ndarray()
         sum = np.sum(ndn)
         sh = data.shape
@@ -57,7 +57,7 @@ class MeasurementTest(unittest.TestCase):
         data[2:, 2] = 2
         data[0, 1:] = 6
         #
-        nbm = imma.measure.NeighboorMatrix(data)
+        nbm = imma.measure.CooccurrenceMatrix(data)
         ndn = nbm.to_ndarray()
         sum = np.sum(ndn)
         sh = data.shape
