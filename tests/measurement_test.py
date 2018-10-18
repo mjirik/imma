@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 import unittest
 import numpy as np
 
-import imma.measurement
+import imma.measure
 
 class MeasurementTest(unittest.TestCase):
 
@@ -18,8 +18,8 @@ class MeasurementTest(unittest.TestCase):
         data[2:, 2] = 2
         data[0, 1:] = 3
 
-        import imma.measurement
-        nbm = imma.measurement.neighboor_matrix(data)
+        import imma.measure
+        nbm = imma.measure.neighboor_matrix(data)
         nbm[1][0]
         self.assertEqual(nbm[1][0], nbm[0][1])
         self.assertEqual(nbm[3][0], nbm[0][3])
@@ -31,7 +31,7 @@ class MeasurementTest(unittest.TestCase):
         data[2:, 2] = 2
         data[0, 1:] = 3
     #
-        nbm = imma.measurement.NeighboorMatrix(data)
+        nbm = imma.measure.NeighboorMatrix(data)
         ndn = nbm.to_ndarray()
         sum = np.sum(ndn)
         sh = data.shape
