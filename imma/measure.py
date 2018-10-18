@@ -85,4 +85,3 @@ def neighboor_matrix(data):
 
         it.iternext()
     return nbm
-
