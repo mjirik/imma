@@ -11,9 +11,9 @@ from scipy.sparse import csc_matrix
 
 
 class NeighboorMatrix(object):
-    def __init__(self, data):
+    def __init__(self, data, dtype=int):
         self.update_neighboor_matrix(data)
-        self.dtype = data.dtype
+        self.dtype = dtype
 
     def update_neighboor_matrix(self, data):
         self.neighboor_matrix = neighboor_matrix(data)
