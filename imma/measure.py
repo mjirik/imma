@@ -10,31 +10,31 @@ import numpy as np
 from scipy.sparse import csc_matrix
 
 
-class NeighboorMatrix(object):
+class CooccurrenceMatrix(object):
     def __init__(self, data, dtype=int):
-        self.update_neighboor_matrix(data)
+        self.update_cooccurrence_matrix(data)
         self.dtype = dtype
 
-    def update_neighboor_matrix(self, data):
-        self.neighboor_matrix = neighboor_matrix(data)
+    def update_cooccurrence_matrix(self, data):
+        self.cooccurrence_matrix = cooccurrence_matrix(data)
 
     def get(self, intensity0, intensity1):
-        return self.neighboor_matrix[intensity0][intensity1]
+        return self.cooccurrence_matrix[intensity0][intensity1]
 
     def to_ndarray(self):
         keys = self.keys()
         inv_keys = self.inv_keys()
-        sz = len(self.neighboor_matrix)
+        sz = len(self.cooccurrence_matrix)
         ndnghb = np.zeros([sz, sz], dtype=self.dtype)
-        for keyx in self.neighboor_matrix:
-            nghbx = self.neighboor_matrix[keyx]
+        for keyx in self.cooccurrence_matrix:
+            nghbx = self.cooccurrence_matrix[keyx]
             for keyy in nghbx:
                 value = nghbx[keyy]
                 ndnghb[inv_keys[keyx], inv_keys[keyy]] = value
         return ndnghb
 
     def keys(self):
-        return sorted(list(self.neighboor_matrix.keys()))
+        return sorted(list(self.cooccurrence_matrix.keys()))
 
     def inv_keys(self):
         keys = list(self.keys())
@@ -42,7 +42,7 @@ class NeighboorMatrix(object):
         return dict(zip(keys, ii))
 
 
-def neighboor_matrix(data):
+def cooccurrence_matrix(data):
     csc_matrix((3, 4), dtype=np.int8).toarray()
 
     nbm = {}
