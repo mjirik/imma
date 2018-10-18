@@ -22,17 +22,24 @@ class NeighboorMatrix(object):
         return self.neighboor_matrix[intensity0][intensity1]
 
     def to_ndarray(self):
+        keys = self.keys()
+        inv_keys = self.inv_keys()
         sz = len(self.neighboor_matrix)
         ndnghb = np.zeros([sz, sz], dtype=self.dtype)
         for keyx in self.neighboor_matrix:
             nghbx = self.neighboor_matrix[keyx]
             for keyy in nghbx:
                 value = nghbx[keyy]
-                ndnghb[keyx, keyy] = value
+                ndnghb[inv_keys[keyx], inv_keys[keyy]] = value
         return ndnghb
 
     def keys(self):
         return self.neighboor_matrix.keys()
+
+    def inv_keys(self):
+        keys = list(self.keys())
+        ii = list(range(len(keys)))
+        return dict(zip(keys, ii))
 
 
 def neighboor_matrix(data):
@@ -62,13 +69,13 @@ def neighboor_matrix(data):
 
                 if data_value0s not in nbm.keys():
                     nbm[data_value0s] = {}
-                if data_value1 not in nbm[data_value0s].keys():
+                if data_value1s not in nbm[data_value0s].keys():
                     nbm[data_value0s][data_value1s] = 0
                 nbm[data_value0s][data_value1s] += 1
 
                 if data_value1s not in nbm.keys():
                     nbm[data_value1s] = {}
-                if data_value0 not in nbm[data_value1s].keys():
+                if data_value0s not in nbm[data_value1s].keys():
                     nbm[data_value1s][data_value0s] = 0
 
                 # if data_value0s != data_value1s:
