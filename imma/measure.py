@@ -34,7 +34,7 @@ class NeighboorMatrix(object):
         return ndnghb
 
     def keys(self):
-        return self.neighboor_matrix.keys()
+        return sorted(list(self.neighboor_matrix.keys()))
 
     def inv_keys(self):
         keys = list(self.keys())
