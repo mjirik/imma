@@ -272,7 +272,7 @@ def combinecrinfo(crinfo1, crinfo2):
     return crinfo
 
 
-def crinfo_from_specific_data(data, margin=0):
+def crinfo_from_specific_data(data, margin=0, make_slices=False):
     """
     Create crinfo of minimum orthogonal nonzero block in input data.
 
@@ -312,7 +312,10 @@ def crinfo_from_specific_data(data, margin=0):
         z2 = data.shape[2] - 1
 
     # ořez
-    crinfo = [[x1, x2], [y1, y2], [z1, z2]]
+    if make_slices:
+        crinfo = (slice(x1, x2), slice(y1, y2), slice(z1, z2))
+    else:
+        crinfo = [[x1, x2], [y1, y2], [z1, z2]]
     return crinfo
 
 

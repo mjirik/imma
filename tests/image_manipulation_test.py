@@ -88,6 +88,18 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEquals(crinfo_auto1, crinfo_auto2)
         self.assertEquals(crinfo_auto1, crinfo_auto3)
 
+    def test_crop_from_specific_data_with_slices(self):
+
+        datap = io3d.datasets.generate_abdominal()
+        data3d = datap["data3d"]
+        segmentation = datap["segmentation"]
+        crinfo_auto1 = ima.crinfo_from_specific_data(segmentation, [5])
+        self.assertEqual(type(data3d[crinfo_auto1]), np.ndarray, "We are able to use slices in data.")
+
+        crinfo_expected = [[0, 99], [20, 99], [45, 99]]
+
+        self.assertEquals(crinfo_auto1, crinfo_expected)
+
     def test_multiple_crop_and_uncrop(self):
         """
         test combination of multiple crop
