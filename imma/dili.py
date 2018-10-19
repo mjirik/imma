@@ -109,14 +109,16 @@ def recursive_update(d, u):
     """
     Dict recursive update.
 
+
+
     Based on Alex Martelli code on stackoverflow
     http://stackoverflow.com/questions/3232943/update-value-of-a-nested-dictionary-of-varying-depth?answertab=votes#tab-top
 
     :param d: dict to update
-    :param u: dict with new data
+    :param u: dict with same structure as d and new data
     :return:
     """
-    for k, v in u.iteritems():
+    for k, v in u.items():
         if isinstance(v, collections.Mapping):
             r = recursive_update(d.get(k, {}), v)
             d[k] = r
