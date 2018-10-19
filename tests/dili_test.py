@@ -10,6 +10,20 @@ from imma import dili
 
 
 class DictListTestCase(unittest.TestCase):
+    def generate_data(self):
+        data = {
+            'a': 1,
+            'b': 2,
+            'c': {
+                'aa': 11,
+                'bb': 22,
+                'cc': {
+                    'aaa': 111
+                }
+            }
+        }
+        return data
+
     def test_ditc_flatten(self):
         data = {
             'a': 1,
@@ -26,7 +40,7 @@ class DictListTestCase(unittest.TestCase):
         dct = dict(dct)
         self.assertIn("cccaaa", dct.keys())
 
-    def test_ditc_flatten_with_separator(self):
+    def test_dict_flatten_with_separator(self):
         data = {
             'a': 1,
             'b': 2,
@@ -41,6 +55,13 @@ class DictListTestCase(unittest.TestCase):
         dct = dili.flatten_dict(data, separator=";")
         dct = dict(dct)
         self.assertIn("c;cc;aaa", dct.keys())
+
+    def test_dict_split(self):
+        data = self.generate_data()
+        ab, c = dili.split_dict(data, ["a", "b"])
+        self.assertIn("a", ab.keys())
+        self.assertIn("b", ab.keys())
+        self.assertIn("c", c.keys())
 
     def test_list_filter(self):
         lst = ["aa", "sss", "aaron", "rew"]

@@ -94,12 +94,13 @@ def split_dict(dct, keys):
         dict_in = {}
         dict_out = {}
 
-    for key, value in dct.items:
+    for key, value in dct.items():
         if key in keys:
             dict_in[key] = value
         else:
             dict_out[key] = value
     return dict_in, dict_out
+
 
 def recursive_update(d, u):
     """
