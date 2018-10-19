@@ -271,8 +271,21 @@ def combinecrinfo(crinfo1, crinfo2):
 
     return crinfo
 
+def extend_crinfo(crinfo, shape, margin):
+    crinfo = fix_crinfo(crinfo, with_slices=True)
+    d = max(0, crinfo[0].start - margin)
+    u = min(shape[0], crinfo[0].stop + margin)
+    slice_z = slice(d, u)
+    d = max(0, crinfo[1].start - margin)
+    u = min(shape[1], crinfo[1].stop + margin)
+    slice_y = slice(d, u)
+    d = max(0, crinfo[2].start - margin)
+    u = min(shape[2], crinfo[2].stop + margin)
+    slice_x = slice(d, u)
+    crinfo = (slice_z, slice_y, slice_x)
+    return crinfo
 
-def crinfo_from_specific_data(data, margin=0, make_slices=False):
+def crinfo_from_specific_data(data, margin=0, with_slices=False):
     """
     Create crinfo of minimum orthogonal nonzero block in input data.
 
@@ -312,7 +325,7 @@ def crinfo_from_specific_data(data, margin=0, make_slices=False):
         z2 = data.shape[2] - 1
 
     # ořez
-    if make_slices:
+    if with_slices:
         crinfo = (slice(x1, x2), slice(y1, y2), slice(z1, z2))
     else:
         crinfo = [[x1, x2], [y1, y2], [z1, z2]]
@@ -400,7 +413,7 @@ def uncrop(data, crinfo, orig_shape, resize=False, outside_mode="constant", cval
     return data_out
 
 
-def fix_crinfo(crinfo, to='axis'):
+def fix_crinfo(crinfo, to='axis', with_slices=False):
     """
     Function recognize order of crinfo and convert it to proper format.
     """
@@ -408,6 +421,13 @@ def fix_crinfo(crinfo, to='axis'):
     crinfo = np.asarray(crinfo)
     if crinfo.shape[0] == 2:
         crinfo = crinfo.T
+
+    if with_slices:
+        crinfo = (
+            slice(crinfo[0][0], crinfo[0][1]),
+            slice(crinfo[1][0], crinfo[1][1]),
+            slice(crinfo[2][0], crinfo[2][1])
+        )
 
     return crinfo
 

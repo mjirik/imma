@@ -100,6 +100,16 @@ class ImageManipulationTest(unittest.TestCase):
 
         self.assertEquals(crinfo_auto1, crinfo_expected)
 
+    def test_extend_crinfo(self):
+
+        datap = io3d.datasets.generate_abdominal()
+        data3d = datap["data3d"]
+        segmentation = datap["segmentation"]
+        crinfo1 = ima.crinfo_from_specific_data(segmentation, [5])
+        crinfo2 = ima.extend_crinfo(crinfo1, data3d.shape, 3)
+        self.assertEqual(type(data3d[crinfo2]), np.ndarray, "We are able to use slices in data with extended crinfo.")
+
+
     def test_multiple_crop_and_uncrop(self):
         """
         test combination of multiple crop
