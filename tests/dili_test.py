@@ -124,6 +124,20 @@ class DictListTestCase(unittest.TestCase):
         # self.assertEqual(dct[2]["name"], "mira")
         self.assertEqual(dct[-1]["name"], "bob")
 
+    def test_ordered_dict_to_dict(self):
+        from collections import OrderedDict
+
+        od = OrderedDict()
+        od["klkj"] = 1
+        od["here is dict"] = {'s':1, 1:17}
+        od["list"] = ["uuu", 146, ["sdf", 18]]
+        od2 = OrderedDict()
+        od2["as"] = 1
+        od2["as2"] = 1
+        od["ordered dict"] = od2
+
+        normal_dict = dili.ordered_dict_to_dict(od)
+        self.assertEqual(type(normal_dict), dict)
 
 def main():
     unittest.main()
