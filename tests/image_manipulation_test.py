@@ -428,6 +428,25 @@ class ImageManipulationTest(unittest.TestCase):
 
         # dist, inds = scipy.in
 
+    def test_select_labels(self):
+
+        datap = io3d.datasets.generate_abdominal()
+        data3d = datap["data3d"]
+        segmentation = datap["segmentation"]
+        selection = ima.select_labels(segmentation, 1)
+        self.assertGreater(np.sum(selection), 50, "select at least few pixels")
+        # crinfo1 = ima.crinfo_from_specific_data(segmentation, [5])
+        # crinfo2 = ima.extend_crinfo(crinfo1, data3d.shape, 3)
+        # self.assertEqual(type(data3d[crinfo2]), np.ndarray, "We are able to use slices in data with extended crinfo.")
+
+    def test_select_labels_with_slab(self):
+
+        datap = io3d.datasets.generate_abdominal()
+        data3d = datap["data3d"]
+        segmentation = datap["segmentation"]
+        selection = ima.select_labels(segmentation, "liver", slab=datap["slab"])
+        self.assertGreater(np.sum(selection), 50, "select at least few pixels")
+
 
 if __name__ == "__main__":
     unittest.main()
