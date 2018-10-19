@@ -447,12 +447,20 @@ class ImageManipulationTest(unittest.TestCase):
         selection = ima.select_labels(segmentation, "liver", slab=datap["slab"])
         self.assertGreater(np.sum(selection), 50, "select at least few pixels")
 
-    def test_get_nlabel(self):
+    def test_get_nlabels(self):
 
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
         newlab = ima.get_nlabels(datap["slab"], "new", return_mode="str")
+        self.assertEqual(type(newlab), str)
+
+    def test_get_nlabel(self):
+
+        datap = io3d.datasets.generate_abdominal()
+        data3d = datap["data3d"]
+        segmentation = datap["segmentation"]
+        newlab = ima.get_nlabel(datap["slab"], "new", return_mode="str")
         self.assertEqual(type(newlab), str)
 
 if __name__ == "__main__":
