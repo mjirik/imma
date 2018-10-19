@@ -3,6 +3,7 @@
 # vim:fenc=utf-8
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 import unittest
@@ -58,7 +59,7 @@ class DictListTestCase(unittest.TestCase):
 
     def test_dict_recursive_update(self):
         data = self.generate_dict_data()
-        data_updated = dili.recursive_update(data, {"c":{"aa": 33}})
+        data_updated = dili.recursive_update(data, {"c": {"aa": 33}})
         self.assertEqual(data_updated["c"]["aa"], 33)
 
     def test_dict_split(self):
@@ -88,7 +89,7 @@ class DictListTestCase(unittest.TestCase):
         self.assertTrue(["sss", "rew"] == output)
 
     def test_dict_find_key(self):
-        slab={"liver": 1, "porta": 2}
+        slab = {"liver": 1, "porta": 2}
         val = dili.dict_find_key(slab, 2)
         self.assertEqual(val, "porta")
 
@@ -129,7 +130,7 @@ class DictListTestCase(unittest.TestCase):
 
         od = OrderedDict()
         od["klkj"] = 1
-        od["here is dict"] = {'s':1, 1:17}
+        od["here is dict"] = {'s': 1, 1: 17}
         od["list"] = ["uuu", 146, ["sdf", 18]]
         od2 = OrderedDict()
         od2["as"] = 1
@@ -138,6 +139,7 @@ class DictListTestCase(unittest.TestCase):
 
         normal_dict = dili.ordered_dict_to_dict(od)
         self.assertEqual(type(normal_dict), dict)
+
 
 def main():
     unittest.main()
