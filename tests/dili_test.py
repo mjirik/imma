@@ -75,6 +75,13 @@ class DictListTestCase(unittest.TestCase):
         self.assertNotIn("b", dct.keys())
         self.assertIn("c", dct.keys())
 
+    def test_find_in_sublist(self):
+        lst = ["auto", "veloco", "toto", "cola"]
+        output = dili.list_contains(lst, "co")
+
+        self.assertIn("veloco", output)
+        self.assertIn("cola", output)
+
     def test_list_filter(self):
         lst = ["aa", "sss", "aaron", "rew"]
         output = dili.list_filter(lst, notstartswith="aa")

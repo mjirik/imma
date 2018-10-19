@@ -26,6 +26,7 @@ def get_default_args(obj):
     dc = collections.OrderedDict(zip(args, defaults))
     return dc
 
+
 def subdict(dct, keys):
     if type(dct) == collections.OrderedDict:
         p = collections.OrderedDict()
@@ -67,6 +68,7 @@ def list_filter(lst, startswith=None, notstartswith=None,
             keeped.append(item)
     return keeped
 
+
 def kick_from_dict(dct, keys):
     if type(dct) == collections.OrderedDict:
         p = collections.OrderedDict()
@@ -78,6 +80,7 @@ def kick_from_dict(dct, keys):
 
     # p = {key: value for key, value in dct.items() if key not in keys}
     return p
+
 
 def split_dict(dct, keys):
     """
@@ -181,7 +184,8 @@ def list_contains(list_of_strings, substring, return_true_false_array=False):
     key_tf = [keyi.find(substring) != -1 for keyi in list_of_strings]
     if return_true_false_array:
         return key_tf
-    keys_to_remove = list_of_strings[key_tf]
+    from itertools import compress
+    keys_to_remove = list(compress(list_of_strings, key_tf))
     return keys_to_remove
 
 
