@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 import numpy as np
 
 import unittest
+from collections import OrderedDict
 from imma import dili
 
 
@@ -70,13 +71,19 @@ class DictListTestCase(unittest.TestCase):
         data_with_list = dili.ndarray_to_list_in_structure(data)
         self.assertEqual(type(data_with_list["c"]["here is ndarray"]), list)
 
-
     def test_dict_split(self):
         data = self.generate_dict_data()
         ab, c = dili.split_dict(data, ["a", "b"])
         self.assertIn("a", ab.keys())
         self.assertIn("b", ab.keys())
         self.assertIn("c", c.keys())
+
+    def test_split_dict_ordered(self):
+        data = OrderedDict([('pear', 1), ('orange', 2), ('banana', 3), ('apple', 4)])
+        ab, c = dili.split_dict(data, ["pear", "banana"])
+        self.assertIn("pear", ab.keys())
+        self.assertIn("banana", ab.keys())
+        self.assertIn("apple", c.keys())
 
     def test_kick_from_dict(self):
         data = self.generate_dict_data()
