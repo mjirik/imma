@@ -463,5 +463,6 @@ class ImageManipulationTest(unittest.TestCase):
         newlab = ima.get_nlabel(datap["slab"], "new", return_mode="str")
         self.assertEqual(type(newlab), str)
 
+
 if __name__ == "__main__":
     unittest.main()

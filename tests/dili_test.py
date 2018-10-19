@@ -58,6 +58,11 @@ class DictListTestCase(unittest.TestCase):
 
     def test_dict_split(self):
         data = self.generate_data()
+        data_updated = dili.recursive_update(data, {"aa", 33})
+        self.assertEqual(data_updated["c"]["aa"], 33)
+
+    def test_dict_split(self):
+        data = self.generate_data()
         ab, c = dili.split_dict(data, ["a", "b"])
         self.assertIn("a", ab.keys())
         self.assertIn("b", ab.keys())
@@ -104,5 +109,7 @@ class DictListTestCase(unittest.TestCase):
         # self.assertEqual(dct[1]["name"], "veru")
         # self.assertEqual(dct[2]["name"], "mira")
         self.assertEqual(dct[-1]["name"], "bob")
+
+
 def main():
     unittest.main()
