@@ -273,17 +273,17 @@ def combinecrinfo(crinfo1, crinfo2):
 
 def extend_crinfo(crinfo, shape, margin):
     crinfo = fix_crinfo(crinfo, with_slices=True)
-    d = max(0, crinfo[0].start - margin)
-    u = min(shape[0], crinfo[0].stop + margin)
-    slice_z = slice(d, u)
-    d = max(0, crinfo[1].start - margin)
-    u = min(shape[1], crinfo[1].stop + margin)
-    slice_y = slice(d, u)
-    d = max(0, crinfo[2].start - margin)
-    u = min(shape[2], crinfo[2].stop + margin)
-    slice_x = slice(d, u)
-    crinfo = (slice_z, slice_y, slice_x)
-    return crinfo
+    d0 = max(0, crinfo[0].start - margin)
+    u0 = min(shape[0], crinfo[0].stop + margin)
+    slice_z = slice(d0, u0)
+    d1 = max(0, crinfo[1].start - margin)
+    u1 = min(shape[1], crinfo[1].stop + margin)
+    slice_y = slice(d1, u1)
+    d2 = max(0, crinfo[2].start - margin)
+    u2 = min(shape[2], crinfo[2].stop + margin)
+    slice_x = slice(d2, u2)
+    crinfoo = (slice_z, slice_y, slice_x)
+    return crinfoo
 
 def crinfo_from_specific_data(data, margin=0, with_slices=False):
     """
@@ -418,16 +418,28 @@ def fix_crinfo(crinfo, to='axis', with_slices=False):
     Function recognize order of crinfo and convert it to proper format.
     """
 
-    crinfo = np.asarray(crinfo)
-    if crinfo.shape[0] == 2:
-        crinfo = crinfo.T
+    if type(crinfo[0]) is slice:
+        if with_slices:
+            return crinfo
+        else:
+            [
+                [crinfo[0].start, crinfo[0].stop],
+                [crinfo[1].start, crinfo[1].stop],
+                [crinfo[2].start, crinfo[2].stop],
+            ]
+    else:
+        crinfo = np.asarray(crinfo)
+        if crinfo.shape[0] == 2:
+            crinfo = crinfo.T
 
-    if with_slices:
-        crinfo = (
-            slice(crinfo[0][0], crinfo[0][1]),
-            slice(crinfo[1][0], crinfo[1][1]),
-            slice(crinfo[2][0], crinfo[2][1])
-        )
+        if with_slices:
+                crinfo = (
+                    slice(crinfo[0][0], crinfo[0][1]),
+                    slice(crinfo[1][0], crinfo[1][1]),
+                    slice(crinfo[2][0], crinfo[2][1])
+                )
+        else:
+            pass
 
     return crinfo
 

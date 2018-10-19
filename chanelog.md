@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 0.6.0 
+
+* New neighborhood function implemented
 
 ## 0.5.0
 

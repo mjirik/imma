@@ -7,7 +7,10 @@ logger = logging.getLogger(__name__)
 
 # import copy
 import numpy as np
+import scipy.ndimage
 from scipy.sparse import csc_matrix
+from . import image_manipulation as ima
+
 
 
 class CooccurrenceMatrix(object):
@@ -45,9 +48,12 @@ class CooccurrenceMatrix(object):
 def cooccurrence_matrix(data, return_counts=True):
     # csc_matrix((3, 4), dtype=np.int8).toarray()
 
+    i = 0
     nbm = {}
     it = np.nditer(data, flags=['multi_index'])
     while not it.finished:
+        print("iter ", i)
+        i += 1
         mindex0 = it.multi_index
         # print("%d <%s>" % (it[0], mindex0), end=' ')
         data_value0 = data[mindex0]
@@ -89,3 +95,122 @@ def cooccurrence_matrix(data, return_counts=True):
 
         it.iternext()
     return nbm
+
+
+def objects_neighbors(labeled_ndarray, labels=None, exclude=None):
+    """
+    Neighbors for one or more object. Objects with label 0 are ignored.
+
+    :param labeled_ndarray: 3D ndarray
+    :param labels: Integer label or list of ints. If is set to None, all labels are processed.
+    :param exclude: List of labels to exclude.
+    :return:
+    """
+
+    if np.min(labeled_ndarray) < 0:
+        ValueError("Input image cannot contain negative labels.")
+
+    if exclude is None:
+        exclude = []
+    bboxes = scipy.ndimage.find_objects(labeled_ndarray)
+    bbox_margin = 1
+
+    output = [None] * len(bboxes)
+    if labels is None:
+        labels = range(len(bboxes))
+    else:
+        if type(labels) is not list:
+            labels = [labels]
+
+    for i in labels:
+        bbox = bboxes[i]
+        ilabel = i + 1
+        if bbox is not None:
+            exbbox = ima.extend_crinfo(bbox, labeled_ndarray.shape, bbox_margin)
+            cropped_ndarray = labeled_ndarray[exbbox]
+            object = (cropped_ndarray == ilabel)
+            dilat_element = scipy.ndimage.morphology.binary_dilation(
+                object,
+                structure=np.ones([3, 3, 3])
+            )
+
+            neighborhood = cropped_ndarray[dilat_element]
+
+            neighbors = np.unique(neighborhood)
+            neighbors = neighbors[neighbors != ilabel]
+            # neighbors = neighbors[neighbors != 0]
+            for exlabel in exclude:
+                neighbors = neighbors[neighbors != exlabel]
+            output[i] = list(neighbors)
+
+    return output
+
+
+def element_neighbors(sklabel, el_number, shifted_zero=0, shifted_sklabel=None):
+    """
+    Gives array of element neighbors numbers (edges+nodes/terminals)
+
+    | input:
+    |   sklabel - original labeled data
+    |   el_number - element label
+
+    | uses/creates:
+    |   self.shifted_sklabel - all labels shifted to positive numbers
+    |   self.shifted_zero - value of original 0
+
+    | returns:
+    |   array of neighbor values
+    |        - nodes for edge, edges for node
+    |   element bounding box (with border)
+    """
+    # check if we have shifted sklabel, if not create it.
+    # try:
+    #     self.shifted_zero
+    #     self.shifted_sklabel
+    # except AttributeError:
+    if shifted_zero is None:
+        pass
+    if (shifted_sklabel is None) or ():
+        logger.debug('Generating shifted sklabel...')
+        shifted_zero = abs(np.min(sklabel)) + 1
+        shifted_sklabel = sklabel + shifted_zero
+
+    el_number_shifted = el_number + shifted_zero
+
+    BOUNDARY_PX = 1
+
+    if el_number < 0:
+        # cant have max_label<0
+        box = scipy.ndimage.find_objects(
+            shifted_sklabel, max_label=el_number_shifted)
+    else:
+        box = scipy.ndimage.find_objects(
+            sklabel, max_label=el_number)
+    box = box[len(box) - 1]
+
+
+    sklabelcr = sklabel[box]
+
+    # element crop
+    element = (sklabelcr == el_number)
+
+    dilat_element = scipy.ndimage.morphology.binary_dilation(
+        element,
+        structure=np.ones([3, 3, 3])
+    )
+
+    neighborhood = sklabelcr * dilat_element
+
+    neighbors = np.unique(neighborhood)
+    neighbors = neighbors[neighbors != 0]
+    neighbors = neighbors[neighbors != el_number]
+
+    if el_number > 0:  # elnumber is edge
+        neighbors = neighbors[neighbors < 0]  # return nodes
+    elif el_number < 0:  # elnumber is node
+        neighbors = neighbors[neighbors > 0]  # return edge
+    else:
+        logger.warning('Element is zero!!')
+        neighbors = []
+
+    return neighbors, box
