@@ -56,7 +56,7 @@ class DictListTestCase(unittest.TestCase):
         dct = dict(dct)
         self.assertIn("c;cc;aaa", dct.keys())
 
-    def test_dict_split(self):
+    def test_dict_recursive_update(self):
         data = self.generate_dict_data()
         data_updated = dili.recursive_update(data, {"aa", 33})
         self.assertEqual(data_updated["c"]["aa"], 33)
