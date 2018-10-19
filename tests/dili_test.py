@@ -10,7 +10,7 @@ from imma import dili
 
 
 class DictListTestCase(unittest.TestCase):
-    def generate_data(self):
+    def generate_dict_data(self):
         data = {
             'a': 1,
             'b': 2,
@@ -57,16 +57,23 @@ class DictListTestCase(unittest.TestCase):
         self.assertIn("c;cc;aaa", dct.keys())
 
     def test_dict_split(self):
-        data = self.generate_data()
+        data = self.generate_dict_data()
         data_updated = dili.recursive_update(data, {"aa", 33})
         self.assertEqual(data_updated["c"]["aa"], 33)
 
     def test_dict_split(self):
-        data = self.generate_data()
+        data = self.generate_dict_data()
         ab, c = dili.split_dict(data, ["a", "b"])
         self.assertIn("a", ab.keys())
         self.assertIn("b", ab.keys())
         self.assertIn("c", c.keys())
+
+    def test_kick_from_dict(self):
+        data = self.generate_dict_data()
+        dct = dili.kick_from_dict(data, ["a", "b"])
+        self.assertNotIn("a", dct.keys())
+        self.assertNotIn("b", dct.keys())
+        self.assertIn("c", dct.keys())
 
     def test_list_filter(self):
         lst = ["aa", "sss", "aaron", "rew"]
