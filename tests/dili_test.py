@@ -75,7 +75,7 @@ class DictListTestCase(unittest.TestCase):
         self.assertNotIn("b", dct.keys())
         self.assertIn("c", dct.keys())
 
-    def test_find_in_sublist(self):
+    def test_find_subsring_in_list(self):
         lst = ["auto", "veloco", "toto", "cola"]
         output = dili.list_contains(lst, "co")
 
