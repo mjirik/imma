@@ -5,6 +5,7 @@
 import logging
 
 logger = logging.getLogger(__name__)
+import numpy as np
 
 import unittest
 from imma import dili
@@ -61,6 +62,14 @@ class DictListTestCase(unittest.TestCase):
         data = self.generate_dict_data()
         data_updated = dili.recursive_update(data, {"c": {"aa": 33}})
         self.assertEqual(data_updated["c"]["aa"], 33)
+
+    def test_ndarray_to_list(self):
+        data = self.generate_dict_data()
+        data["c"]["here is ndarray"] = np.asarray([1, 2, 5])
+
+        data_with_list = dili.ndarray_to_list_in_structure(data)
+        self.assertEqual(type(data_with_list["c"]["here is ndarray"]), list)
+
 
     def test_dict_split(self):
         data = self.generate_dict_data()
