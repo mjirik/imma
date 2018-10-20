@@ -257,6 +257,11 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertNotEqual(val, 1)
         self.assertNotEqual(val, 2)
 
+    def test_simple_add_carefully(self):
+        slab = {"liver": 1, "porta": 2}
+        ima.add_slab_label_carefully(slab, 5, "cava")
+        self.assertEqual(slab["cava"], 5)
+
     def test_simple_string_get_nlabel_return_string(self):
         slab={"liver": 1, "porta": 2}
         val = ima.get_nlabel(slab, "porta", return_mode="str")

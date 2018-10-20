@@ -88,6 +88,7 @@ def get_nlabel(slab, label, label_meta=None, return_mode="num"):
     :param label_meta: string, number or "new
     :return:
     """
+    # todo add add_new and dont_add parameters to have fine control over adding new keys in slab
     numlabel = None
     strlabel = None
     if type(label) == str:
@@ -159,11 +160,8 @@ def add_slab_label_carefully(slab, numeric_label, string_label):
     :param string_label:
     :return:
     """
-    slab_tmp = {string_label: numeric_label}
-    slab_tmp.update(slab)
-    slab = slab_tmp
-    logger.debug('self.slab')
-    logger.debug(str(slab))
+    DeprecationWarning("Function will be removed in the future. Use get_nlabel instead.")
+    get_nlabel(slab, numeric_label, string_label)
 
 
 def add_missing_labels(segmentation, slab):
