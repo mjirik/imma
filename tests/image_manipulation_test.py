@@ -204,6 +204,15 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEqual(unique[1], 1)
         self.assertEqual(unique[2], 2)
 
+    def test_fit_to_shape(self):
+        datap = io3d.datasets.generate_abdominal()
+        data3d = datap["data3d"]
+        segmentation = datap["segmentation"]
+        #orig shape 100x100x100
+        shape = [95, 117, 100]
+        new_seg = ima.fit_to_shape(segmentation, shape, segmentation.dtype)
+        self.assertTrue(np.array_equal(new_seg.shape, shape))
+
     def test_fix_crinfo(self):
         crinfo = [[10, 15], [30, 40], [1, 50]]
         cri_fixed = ima.fix_crinfo(crinfo)

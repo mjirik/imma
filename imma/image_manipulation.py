@@ -519,26 +519,28 @@ def resize_to_shape(data, shape, zoom=None, mode='reflect', order=0):
         ).astype(dtype)
         logger.debug('resize to orig with scipy.ndimage')
 
-        # @TODO odstranit hack pro oříznutí na stejnou velikost
-        # v podstatě je to vyřešeno, ale nechalo by se to dělat elegantněji v zoom
-        # tam je bohužel patrně bug
-        # rint 'd3d ', self.data3d.shape
-        # rint 's orig scale shape ', segm_orig_scale.shape
-        shp = [
-            np.min([segm_orig_scale.shape[0], shape[0]]),
-            np.min([segm_orig_scale.shape[1], shape[1]]),
-            np.min([segm_orig_scale.shape[2], shape[2]]),
-        ]
-        # elf.data3d = self.data3d[0:shp[0], 0:shp[1], 0:shp[2]]
-        # mport ipdb; ipdb.set_trace() # BREAKPOINT
-
-        segmentation = np.zeros(shape, dtype=dtype)
-        segmentation[
-        0:shp[0],
-        0:shp[1],
-        0:shp[2]] = segm_orig_scale[0:shp[0], 0:shp[1], 0:shp[2]]
-
+        segmentation = fit_to_shape(segm_orig_scale, shape, dtype)
         del segm_orig_scale
+    return segmentation
+
+
+def fit_to_shape(segm_orig_scale, shape, dtype):
+    # @TODO odstranit hack pro oříznutí na stejnou velikost
+    # v podstatě je to vyřešeno, ale nechalo by se to dělat elegantněji v zoom
+    # tam je bohužel patrně bug
+    # rint 'd3d ', self.data3d.shape
+    # rint 's orig scale shape ', segm_orig_scale.shape
+    shp = [
+        np.min([segm_orig_scale.shape[0], shape[0]]),
+        np.min([segm_orig_scale.shape[1], shape[1]]),
+        np.min([segm_orig_scale.shape[2], shape[2]]),
+    ]
+    # elf.data3d = self.data3d[0:shp[0], 0:shp[1], 0:shp[2]]
+    # mport ipdb; ipdb.set_trace() # BREAKPOINT
+
+    segmentation = np.zeros(shape, dtype=dtype)
+    segmentation[:shp[0], :shp[1], :shp[2]] = segm_orig_scale[:shp[0], :shp[1], :shp[2]]
+
     return segmentation
 
 
