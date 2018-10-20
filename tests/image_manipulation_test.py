@@ -455,13 +455,20 @@ class ImageManipulationTest(unittest.TestCase):
         newlab = ima.get_nlabels(datap["slab"], "new", return_mode="str")
         self.assertEqual(type(newlab), str)
 
-    def test_get_nlabel(self):
+    def test_get_nlabel_new(self):
 
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
         newlab = ima.get_nlabel(datap["slab"], "new", return_mode="str")
         self.assertEqual(type(newlab), str)
+
+        newlab = ima.get_nlabel(datap["slab"], "new", 37, return_mode="str")
+        self.assertEqual(type(newlab), str, "new label with defined number value")
+        self.assertEqual(newlab, "37")
+
+        newlab = ima.get_nlabel(datap["slab"], "new", return_mode="num")
+        self.assertTrue(np.issubdtype(type(newlab), np.integer))
 
     def test_biggest_object(self):
         datap = io3d.datasets.generate_abdominal()
