@@ -463,6 +463,45 @@ class ImageManipulationTest(unittest.TestCase):
         newlab = ima.get_nlabel(datap["slab"], "new", return_mode="str")
         self.assertEqual(type(newlab), str)
 
+    def test_biggest_object(self):
+        datap = io3d.datasets.generate_abdominal()
+        data3d = datap["data3d"]
+        segmentation = datap["segmentation"]
+        seg_biggest = ima.get_one_biggest_object(segmentation)
+        # newlab = ima.get_nlabels(datap["slab"], "new", return_mode="str")
+        self.assertEqual(type(seg_biggest), np.ndarray)
+        self.assertEqual(np.array_equal(seg_biggest.shape), segmentation.shape)
+        self.assertEqual(np.array_equal(seg_biggest.shape), segmentation.shape)
+
+    def test_biggest_object_label(self):
+        datap = io3d.datasets.generate_abdominal()
+        data3d = datap["data3d"]
+        segmentation = datap["segmentation"]
+        slab = datap["slab"]
+        import timeit
+        t0 = timeit.timeit(
+            setup="""
+import io3d.datasets
+import imma.image_manipulation as ima
+datap = io3d.datasets.generate_abdominal()
+            """,
+            stmt="ima.max_area_index(datap['segmentation'], 100)", number=3)
+        t1 = timeit.timeit(
+            setup="""
+import io3d.datasets
+import imma.image_manipulation as ima
+datap = io3d.datasets.generate_abdominal()
+            """,
+            stmt="ima.max_area_index2(datap['segmentation'], 100)", number=3)
+        # seg_biggest_i = ima.max_area_index(segmentation, 100)
+        # seg_biggest_i = ima.max_area_index(segmentation, 100)
+        # %timeit
+        # newlab = ima.get_nlabels(datap["slab"], "new", return_mode="str")
+        # self.assertEqual(type(seg_biggest), np.ndarray)
+        # self.assertEqual(np.array_equal(seg_biggest.shape), segmentation.shape)
+        # self.assertEqual(np.array_equal(seg_biggest.shape), segmentation.shape)
+        self.assertGreater(t1, t0)
+        # print(t0, t1)
 
 if __name__ == "__main__":
     unittest.main()

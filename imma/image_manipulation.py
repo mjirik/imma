@@ -461,6 +461,23 @@ def max_area_index(labels, num):
     """
     mx = 0
     mxi = -1
+    un = np.unique(labels)
+    # kick out zero
+    un = un[un != 0]
+    for l in un:
+        mxtmp = np.sum(labels == l)
+        if mxtmp > mx:
+            mx = mxtmp
+            mxi = l
+
+    return mxi
+
+def max_area_index2(labels, num):
+    """
+    Return index of maxmum labeled area. Old implementation. Slower.
+    """
+    mx = 0
+    mxi = -1
     for l in range(1, num + 1):
         mxtmp = np.sum(labels == l)
         if mxtmp > mx:
