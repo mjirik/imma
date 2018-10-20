@@ -502,8 +502,8 @@ def resize_to_shape(data, shape, zoom=None, mode='reflect', order=0):
 
         segmentation = segm_orig_scale
         logger.debug('resize to orig with skimage')
-    except Exception:
-        logger.warning("Resize by scipy will be removed in the future")
+    except ImportError:
+        DeprecationWarning("Resize by scipy will be removed in the future")
         mode = 'nearest'
         import scipy
         import scipy.ndimage
