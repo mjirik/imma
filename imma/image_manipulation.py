@@ -476,6 +476,7 @@ def max_area_index2(labels, num):
     """
     Return index of maxmum labeled area. Old implementation. Slower.
     """
+    DeprecationWarning("Function will be removed in future")
     mx = 0
     mxi = -1
     for l in range(1, num + 1):
