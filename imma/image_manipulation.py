@@ -152,23 +152,6 @@ def update_slab(slab, numeric_label, string_label):
     logger.debug(str(slab))
 
 
-def add_slab_label_carefully2(slab, numeric_label, string_label):
-    """ Add label to slab if it is not there yet.
-
-    :param numeric_label:
-    :param string_label:
-    :return:
-    """
-    # todo implement
-    # if numeric_label in
-    pass
-
-
-def add_missing_labels(segmentation, slab):
-    labels = np.unique(segmentation)
-    get_nlabels(slab, labels)
-
-
 def add_slab_label_carefully(slab, numeric_label, string_label):
     """ Add label to slab if it is not there yet.
 
@@ -471,6 +454,7 @@ def max_area_index(labels, num=None):
             mxi = l
 
     return mxi
+
 
 def max_area_index2(labels, num):
     """

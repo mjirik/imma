@@ -522,5 +522,15 @@ datap = io3d.datasets.generate_abdominal()
         self.assertGreater(t1, t0)
         # print(t0, t1)
 
+    def test_add_missing_label(self):
+        datap = io3d.datasets.generate_abdominal()
+        data3d = datap["data3d"]
+        segmentation = datap["segmentation"]
+        slab = datap["slab"]
+        slab = {"none": 0, "liver": 1}
+        ima.add_missing_labels(segmentation, slab)
+        self.assertGreater(len(slab), 2)
+
+
 if __name__ == "__main__":
     unittest.main()
