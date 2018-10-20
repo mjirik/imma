@@ -455,7 +455,7 @@ def get_one_biggest_object(data):
     return data
 
 
-def max_area_index(labels, num):
+def max_area_index(labels, num=None):
     """
     Return index of maxmum labeled area
     """

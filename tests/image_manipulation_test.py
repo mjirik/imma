@@ -478,6 +478,18 @@ class ImageManipulationTest(unittest.TestCase):
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
         slab = datap["slab"]
+        # import io3d.datasets
+        # import imma.image_manipulation as ima
+        datap = io3d.datasets.generate_abdominal()
+        bigges_area_label = ima.max_area_index(segmentation)
+        self.assertEqual(bigges_area_label, slab["liver"])
+
+        # test also the old version
+        bigges_area_label2 = ima.max_area_index2(segmentation, 30)
+        self.assertEqual(bigges_area_label, bigges_area_label2)
+
+    @unittest.skip("This test just checks the time requirements")
+    def test_biggest_object_label_timeit(self):
         import timeit
         t0 = timeit.timeit(
             setup="""
