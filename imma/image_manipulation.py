@@ -16,6 +16,7 @@ from io3d import dili
 path_to_script = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(path_to_script, "../extern/sed3"))
 
+
 def select_labels(segmentation, labels, slab=None):
     """
     return ndimage with zeros and ones based on input labels
@@ -252,6 +253,7 @@ def combinecrinfo(crinfo1, crinfo2):
 
     return crinfo
 
+
 def extend_crinfo(crinfo, shape, margin):
     crinfo = fix_crinfo(crinfo, with_slices=True)
     d0 = max(0, crinfo[0].start - margin)
@@ -265,6 +267,7 @@ def extend_crinfo(crinfo, shape, margin):
     slice_x = slice(d2, u2)
     crinfoo = (slice_z, slice_y, slice_x)
     return crinfoo
+
 
 def crinfo_from_specific_data(data, margin=0, with_slices=False):
     """
@@ -414,11 +417,11 @@ def fix_crinfo(crinfo, to='axis', with_slices=False):
             crinfo = crinfo.T
 
         if with_slices:
-                crinfo = (
-                    slice(crinfo[0][0], crinfo[0][1]),
-                    slice(crinfo[1][0], crinfo[1][1]),
-                    slice(crinfo[2][0], crinfo[2][1])
-                )
+            crinfo = (
+                slice(crinfo[0][0], crinfo[0][1]),
+                slice(crinfo[1][0], crinfo[1][1]),
+                slice(crinfo[2][0], crinfo[2][1])
+            )
         else:
             pass
 
@@ -712,7 +715,7 @@ def distance_segmentation(seeds, method="edt"):
     else:
         dst_transform = method
 
-    inds = dst_transform(seeds==0, return_indices=True, return_distances=False)
+    inds = dst_transform(seeds == 0, return_indices=True, return_distances=False)
 
     lin_inds = []
     for one_ax in inds:
@@ -721,8 +724,4 @@ def distance_segmentation(seeds, method="edt"):
     segm = seeds[lin_inds].reshape(seeds.shape)
     return segm
 
-
-
     pass
-
-

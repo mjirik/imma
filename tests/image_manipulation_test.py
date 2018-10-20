@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+
 logger = logging.getLogger(__name__)
 # import funkcí z jiného adresáře
 import os.path
@@ -15,13 +16,13 @@ import os
 import io3d.datasets
 import imma.image_manipulation as ima
 
+
 class ImageManipulationTest(unittest.TestCase):
     interactivetTest = False
+
     # interactivetTest = True
 
-
     def test_resize_to_shape(self):
-
         data = np.random.rand(3, 4, 5)
         new_shape = [5, 6, 6]
         data_out = ima.resize_to_shape(data, new_shape)
@@ -33,7 +34,6 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEquals(new_shape[2], data_out.shape[2])
 
     def test_resize_to_mm(self):
-
         data = np.random.rand(3, 4, 6)
         voxelsize_mm = [2, 3, 1]
         new_voxelsize_mm = [1, 3, 2]
@@ -72,15 +72,13 @@ class ImageManipulationTest(unittest.TestCase):
 
         self.assertTrue(img_uncropped[4, 4, 3] == img_in[4, 4, 3])
 
-
     def test_crop_from_specific_data(self):
-
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
         crinfo_auto1 = ima.crinfo_from_specific_data(segmentation, [5])
         crinfo_auto2 = ima.crinfo_from_specific_data(segmentation, 5)
-        crinfo_auto3 = ima.crinfo_from_specific_data(segmentation, [5,5, 5])
+        crinfo_auto3 = ima.crinfo_from_specific_data(segmentation, [5, 5, 5])
 
         crinfo_expected = [[0, 99], [20, 99], [45, 99]]
 
@@ -89,7 +87,6 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEquals(crinfo_auto1, crinfo_auto3)
 
     def test_crop_from_specific_data_with_slices(self):
-
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
@@ -101,14 +98,12 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEquals(crinfo_auto1, crinfo_expected)
 
     def test_extend_crinfo(self):
-
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
         crinfo1 = ima.crinfo_from_specific_data(segmentation, [5])
         crinfo2 = ima.extend_crinfo(crinfo1, data3d.shape, 3)
         self.assertEqual(type(data3d[crinfo2]), np.ndarray, "We are able to use slices in data with extended crinfo.")
-
 
     def test_multiple_crop_and_uncrop(self):
         """
@@ -163,7 +158,6 @@ class ImageManipulationTest(unittest.TestCase):
         logger.debug("img_cropped.shape" + str(img_cropped.shape))
         logger.debug("img_uncropped.shape" + str(img_uncropped.shape))
 
-
         self.assertEquals(img_in.shape, img_uncropped.shape)
         # sonda indexes inside cropped area
         # cr_com = np.asarray(crinfo_combined)
@@ -180,7 +174,6 @@ class ImageManipulationTest(unittest.TestCase):
             self.assertEquals(sonda_intensity_in, sonda_intensity_uncropped)
 
     def test_resize_to_shape(self):
-
         data = np.random.rand(3, 4, 5)
         new_shape = [5, 6, 6]
         data_out = ima.resize_to_shape(data, new_shape)
@@ -221,7 +214,6 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertTrue(cri_fixed[2, 1] == 50)
 
     def test_resize_to_mm(self):
-
         data = np.random.rand(3, 4, 5)
         voxelsize_mm = [2, 3, 1]
         new_voxelsize_mm = [1, 3, 2]
@@ -233,26 +225,26 @@ class ImageManipulationTest(unittest.TestCase):
         # self.assertCountEqual(expected_shape, data_out.shape)
 
     def test_simple_get_nlabel(self):
-        slab={"liver": 1, "porta": 2}
+        slab = {"liver": 1, "porta": 2}
         val = ima.get_nlabel(slab, 2)
         self.assertEqual(val, 2)
         self.assertEqual(len(slab), 2)
 
     def test_simple_string_get_nlabel(self):
-        slab={"liver": 1, "porta": 2}
+        slab = {"liver": 1, "porta": 2}
         val = ima.get_nlabel(slab, "porta")
         self.assertEqual(val, 2)
         self.assertEqual(len(slab), 2)
 
     def test_simple_new_numeric_get_nlabel(self):
-        slab={"liver": 1, "porta": 2}
+        slab = {"liver": 1, "porta": 2}
         val = ima.get_nlabel(slab, 7)
         self.assertNotEqual(val, 1)
         self.assertNotEqual(val, 2)
         self.assertEqual(val, 7)
 
     def test_simple_new_string_get_nlabel(self):
-        slab={"liver": 1, "porta": 2}
+        slab = {"liver": 1, "porta": 2}
         val = ima.get_nlabel(slab, "cava")
         self.assertNotEqual(val, 1)
         self.assertNotEqual(val, 2)
@@ -263,23 +255,23 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEqual(slab["cava"], 5)
 
     def test_simple_string_get_nlabel_return_string(self):
-        slab={"liver": 1, "porta": 2}
+        slab = {"liver": 1, "porta": 2}
         val = ima.get_nlabel(slab, "porta", return_mode="str")
         self.assertEqual(val, "porta")
 
     def test_simple_numeric_get_nlabel_return_string(self):
-        slab={"liver": 1, "porta": 2}
+        slab = {"liver": 1, "porta": 2}
         val = ima.get_nlabel(slab, 2, return_mode="str")
         self.assertEqual(val, "porta")
 
     def test_get_nlabels_single_label(self):
-        slab={"liver": 1, "kindey": 15, "none":0}
+        slab = {"liver": 1, "kindey": 15, "none": 0}
         labels = 1
         val = ima.get_nlabels(slab, labels)
         self.assertEqual(val, 1)
 
     def test_get_nlabels_multiple(self):
-        slab={"liver": 1, "porta": 2}
+        slab = {"liver": 1, "porta": 2}
         val = ima.get_nlabels(slab, [2, "porta", "new", 7], return_mode="str")
         self.assertEqual(val[0], "porta")
         self.assertEqual(val[1], "porta")
@@ -287,13 +279,13 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEqual(val[3], "7")
 
     def test_get_nlabels_single(self):
-        slab={"liver": 1, "porta": 2}
+        slab = {"liver": 1, "porta": 2}
 
         val = ima.get_nlabels(slab, "porta", return_mode="int")
         self.assertEqual(val, 2)
 
     def test_get_nlabels_single_both(self):
-        slab={"liver": 1, "porta": 2}
+        slab = {"liver": 1, "porta": 2}
 
         val = ima.get_nlabels(slab, "porta", return_mode="both")
         self.assertEqual(val[0], 2)
@@ -325,7 +317,6 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertGreater(np.count_nonzero(data), np.count_nonzero(selected))
 
     def test_rotate(self):
-
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         phi_deg, theta_deg = ima.random_rotate_paramteres()
@@ -385,7 +376,6 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertTrue(img_uncropped[-1, -1, -1] == 0)
         self.assertTrue(img_uncropped[4, 4, 3] == img_in[4, 4, 3])
 
-
     def test_uncrop_with_start_point_crinfo(self):
         shape = [10, 10, 5]
         orig_shape = [15, 13, 7]
@@ -395,7 +385,7 @@ class ImageManipulationTest(unittest.TestCase):
         img_uncropped = ima.uncrop(img_in, crinfo=crinfo, orig_shape=orig_shape)
 
         self.assertTrue(img_uncropped[-1, -1, -1] == 0)
-        self.assertTrue(img_uncropped[4 + 5, 4 + 2, 3 + 1] == img_in[4 , 4, 3])
+        self.assertTrue(img_uncropped[4 + 5, 4 + 2, 3 + 1] == img_in[4, 4, 3])
 
     def test_squeeze_labels(self):
         seeds = np.zeros([50, 60, 70])
@@ -434,7 +424,6 @@ class ImageManipulationTest(unittest.TestCase):
         # dist, inds = scipy.in
 
     def test_select_labels(self):
-
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
@@ -445,7 +434,6 @@ class ImageManipulationTest(unittest.TestCase):
         # self.assertEqual(type(data3d[crinfo2]), np.ndarray, "We are able to use slices in data with extended crinfo.")
 
     def test_select_labels_with_slab(self):
-
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
@@ -453,7 +441,6 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertGreater(np.sum(selection), 50, "select at least few pixels")
 
     def test_get_nlabels(self):
-
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
@@ -461,7 +448,6 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEqual(type(newlab), str)
 
     def test_get_nlabel_new(self):
-
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]

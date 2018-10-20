@@ -12,7 +12,6 @@ from scipy.sparse import csc_matrix
 from . import image_manipulation as ima
 
 
-
 class CooccurrenceMatrix(object):
     def __init__(self, data, return_counts=True, dtype=int):
         self.update_cooccurrence_matrix(data, return_counts=return_counts)
@@ -144,5 +143,3 @@ def objects_neighbors(labeled_ndarray, labels=None, exclude=None):
             output[i] = list(neighbors)
 
     return output
-
-

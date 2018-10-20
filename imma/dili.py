@@ -5,6 +5,7 @@
 Module is provides funcions for dict lists and functions processing
 """
 import logging
+
 logger = logging.getLogger(__name__)
 import collections
 import inspect
@@ -126,10 +127,12 @@ def recursive_update(d, u):
             d[k] = u[k]
     return d
 
+
 from collections import Mapping
 from operator import add
 
 _FLAG_FIRST = object()
+
 
 def flatten_dict_join_keys(dct, join_symbol=" "):
     """ Flatten dict with defined key join symbol.
@@ -138,10 +141,10 @@ def flatten_dict_join_keys(dct, join_symbol=" "):
     :param join_symbol: default value is " "
     :return:
     """
-    return dict( flatten_dict(dct, join=lambda a,b:a+join_symbol+b) )
+    return dict(flatten_dict(dct, join=lambda a, b: a + join_symbol + b))
 
 
-def flatten_dict(dct, separator=None, join=add, lift=lambda x:x):
+def flatten_dict(dct, separator=None, join=add, lift=lambda x: x):
     """
 
     Based on ninjagecko code on stackoveflow
@@ -165,16 +168,18 @@ def flatten_dict(dct, separator=None, join=add, lift=lambda x:x):
     if type(separator) is str:
         join = lambda a, b: a + separator + b
     elif type(separator) in (list, tuple):
-        lift = lambda x:(x,)
+        lift = lambda x: (x,)
 
     results = []
+
     def visit(subdict, results, partialKey):
-        for k,v in subdict.items():
-            newKey = lift(k) if partialKey==_FLAG_FIRST else join(partialKey,lift(k))
-            if isinstance(v,Mapping):
+        for k, v in subdict.items():
+            newKey = lift(k) if partialKey == _FLAG_FIRST else join(partialKey, lift(k))
+            if isinstance(v, Mapping):
                 visit(v, results, newKey)
             else:
-                results.append((newKey,v))
+                results.append((newKey, v))
+
     visit(dct, results, _FLAG_FIRST)
     return results
 
@@ -201,7 +206,7 @@ def df_drop_duplicates(df, ignore_key_pattern="time"):
     """
 
     keys_to_remove = list_contains(df.keys(), ignore_key_pattern)
-    #key_tf = [key.find(noinfo_key_pattern) != -1 for key in df.keys()]
+    # key_tf = [key.find(noinfo_key_pattern) != -1 for key in df.keys()]
     # keys_to_remove
     # remove duplicates
     ks = copy.copy(list(df.keys()))
@@ -259,8 +264,10 @@ def sort_list_of_dicts(lst_of_dct, keys, reverse=False, **sort_args):
         keys = [keys]
     # dcmdir = lst_of_dct[:]
     # lst_of_dct.sort(key=lambda x: [x[key] for key in keys], reverse=reverse, **sort_args)
-    lst_of_dct.sort(key=lambda x: [((False, x[key]) if key in x else (True, 0)) for key in keys], reverse=reverse, **sort_args)
+    lst_of_dct.sort(key=lambda x: [((False, x[key]) if key in x else (True, 0)) for key in keys], reverse=reverse,
+                    **sort_args)
     return lst_of_dct
+
 
 def ordered_dict_to_dict(config):
     """
@@ -277,7 +284,6 @@ def ordered_dict_to_dict(config):
             config[key] = ordered_dict_to_dict(config[key])
 
     return config
-
 
 # def struct_to_yaml(cfg):
 #     """
@@ -299,4 +305,3 @@ def ordered_dict_to_dict(config):
 #             isconverted[key] = True
 #             cfg[key] = yaml.dump(value, default_flow_style=True)
 #     return cfg
-

@@ -94,7 +94,6 @@ class MeasurementTest(unittest.TestCase):
         self.assertIn(1, keys)
         self.assertIn(2, keys)
 
-
     def test_element_neighboors(self):
         data = np.zeros((1, 3, 4), dtype=int)
         data[0, :3, 1] = 1
@@ -122,6 +121,7 @@ class MeasurementTest(unittest.TestCase):
         self.assertTrue(np.array_equal(neighbs[1], [0, 1]), "Label 2 is negbor to [0, 1]")
         self.assertTrue(neighbs[3] is None, "Label 4 has no neighboor")
         self.assertTrue(np.array_equal(neighbs[5], [0, 1]), "Label 6 is negbor to [0, 1]")
+
 
 if __name__ == "__main__":
     unittest.main()
