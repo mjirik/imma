@@ -458,6 +458,10 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEqual(type(newlab), str, "new label with defined number value")
         self.assertEqual(newlab, "37")
 
+        newlab = ima.get_nlabel(datap["slab"], 38, "new", return_mode="str")
+        self.assertEqual(type(newlab), str, "new label with defined number value")
+        self.assertEqual(newlab, "38")
+
         newlab = ima.get_nlabel(datap["slab"], "new", return_mode="num")
         self.assertTrue(np.issubdtype(type(newlab), np.integer))
 
