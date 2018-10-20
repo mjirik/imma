@@ -78,6 +78,14 @@ class DictListTestCase(unittest.TestCase):
         self.assertIn("b", ab.keys())
         self.assertIn("c", c.keys())
 
+    def test_dict_subdict(self):
+        data = self.generate_dict_data()
+
+        ab = dili.subdict(data, ["a", "b"])
+        self.assertIn("a", ab.keys())
+        self.assertIn("b", ab.keys())
+        # self.assertIn("c", c.keys())
+
     def test_split_dict_ordered(self):
         data = OrderedDict([('pear', 1), ('orange', 2), ('banana', 3), ('apple', 4)])
         ab, c = dili.split_dict(data, ["pear", "banana"])
@@ -174,6 +182,7 @@ class DictListTestCase(unittest.TestCase):
         self.assertEqual(args["first"], None)
         self.assertEqual(args["second"], 5)
         self.assertEqual(args["third"], [])
+
 
 class Foo:
     def __init__(self, first=None, second=5, third=[]):
