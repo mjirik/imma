@@ -90,9 +90,10 @@ class ImageManipulationTest(unittest.TestCase):
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
-        crinfo_auto1 = ima.crinfo_from_specific_data(segmentation, [5])
+        crinfo_auto1 = ima.crinfo_from_specific_data(segmentation, [5], with_slices=True)
         self.assertEqual(type(data3d[crinfo_auto1]), np.ndarray, "We are able to use slices in data.")
 
+        crinfo_auto1 = ima.fix_crinfo(crinfo_auto1, with_slices=False)
         crinfo_expected = [[0, 99], [20, 99], [45, 99]]
 
         self.assertEquals(crinfo_auto1, crinfo_expected)

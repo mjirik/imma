@@ -406,7 +406,7 @@ def fix_crinfo(crinfo, to='axis', with_slices=False):
         if with_slices:
             return crinfo
         else:
-            [
+            crinfo = [
                 [crinfo[0].start, crinfo[0].stop],
                 [crinfo[1].start, crinfo[1].stop],
                 [crinfo[2].start, crinfo[2].stop],
