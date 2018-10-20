@@ -477,8 +477,8 @@ class ImageManipulationTest(unittest.TestCase):
         seg_biggest = ima.get_one_biggest_object(segmentation)
         # newlab = ima.get_nlabels(datap["slab"], "new", return_mode="str")
         self.assertEqual(type(seg_biggest), np.ndarray)
-        self.assertEqual(np.array_equal(seg_biggest.shape), segmentation.shape)
-        self.assertEqual(np.array_equal(seg_biggest.shape), segmentation.shape)
+        self.assertTrue(np.array_equal(seg_biggest.shape, segmentation.shape))
+        self.assertTrue(np.array_equal(seg_biggest.shape, segmentation.shape))
 
     def test_biggest_object_label(self):
         datap = io3d.datasets.generate_abdominal()
