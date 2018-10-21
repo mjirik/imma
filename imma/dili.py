@@ -180,12 +180,11 @@ def list_contains(list_of_strings, substring, return_true_false_array=False):
     return keys_to_remove
 
 
-def df_drop_duplicates(df, ignore_key_pattern="time"):
+def df_drop_keys_contains(df, ignore_key_pattern="time"):
     """
-    Drop duplicates from dataframe ignore columns with keys containing defined pattern.
-
+    Return dataframe columns keys without columns containing key pattern.
     :param df:
-    :param noinfo_key_pattern:
+    :param ignore_key_pattern:
     :return:
     """
 
@@ -196,6 +195,20 @@ def df_drop_duplicates(df, ignore_key_pattern="time"):
     ks = copy.copy(list(df.keys()))
     for key in keys_to_remove:
         ks.remove(key)
+
+    return ks
+
+
+def df_drop_duplicates(df, ignore_key_pattern="time"):
+    """
+    Drop duplicates from dataframe ignore columns with keys containing defined pattern.
+
+    :param df:
+    :param noinfo_key_pattern:
+    :return:
+    """
+
+    ks = df_drop_keys_contains(df, ignore_key_pattern)
 
     df = df.drop_duplicates(ks)
     return df

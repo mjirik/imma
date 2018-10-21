@@ -164,6 +164,13 @@ class DictListTestCase(unittest.TestCase):
         normal_dict = dili.ordered_dict_to_dict(od)
         self.assertEqual(type(normal_dict), dict)
 
+    def test_drop_duplicates(self):
+        import pandas as pd
+
+        df = pd.DataFrame({"col1": [5, 5, 1], "col2": [2, 2, 3], "time1": [1, 7, 9], "time2": [9, 7, 5]})
+        dfn = dili.df_drop_duplicates(df, "time")
+        # self.assertEqual(len(dfn.keys()), 2)
+        self.assertEqual(len(dfn), 2)
 
 
 def main():
