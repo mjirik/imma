@@ -27,24 +27,35 @@ class ObjTestCase(unittest.TestCase):
         }
         return data
 
-    def test_get_standard_arguments(self):
+    def test_get_standard_arguments_obj(self):
         from collections import OrderedDict
-        args = obj.get_default_args(Foo)
-        self.assertEqual(type(args), OrderedDict)
-        self.assertIn("first", args)
-        self.assertEqual(args["first"], None)
-        self.assertEqual(args["second"], 5)
-        self.assertEqual(args["third"], [])
+        args, kwargs = obj.get_default_args(Foo)
+        self.assertEqual(type(kwargs), OrderedDict)
+        self.assertIn("first", kwargs)
+        self.assertEqual(kwargs["first"], None)
+        self.assertEqual(kwargs["second"], 5)
+        self.assertEqual(kwargs["third"], [])
 
-    @unittest.skip("Waiting for implementation")
+    # @unittest.skip("Waiting for implementation")
     def test_get_standard_arguments_with_position_arg(self):
         from collections import OrderedDict
-        args = obj.get_default_args(Bar)
-        self.assertEqual(type(args), OrderedDict)
-        self.assertIn("first", args)
-        self.assertEqual(args["first"], None)
-        self.assertEqual(args["second"], 5)
-        self.assertEqual(args["third"], [])
+        args, kwargs = obj.get_default_args(Bar)
+        self.assertEqual(type(kwargs), OrderedDict)
+        self.assertIn("first", kwargs)
+        self.assertEqual(kwargs["first"], None)
+        self.assertEqual(kwargs["second"], 5)
+        self.assertEqual(kwargs["third"], [])
+
+        self.assertIn("zero" ,args)
+
+    def test_get_standard_arguments_function(self):
+        from collections import OrderedDict
+        args, kwargs = obj.get_default_args(foo)
+        self.assertEqual(type(kwargs), OrderedDict)
+        self.assertIn("first", kwargs)
+        self.assertEqual(kwargs["first"], None)
+        self.assertEqual(kwargs["second"], 5)
+        self.assertEqual(kwargs["third"], [])
 
 
 class Foo:
@@ -56,6 +67,8 @@ class Bar:
     def __init__(self, zero, first=None, second=5, third=[]):
         pass
 
+def foo(zero, first, second=5, third=[]):
+    pass
 
 def main():
     unittest.main()
