@@ -56,6 +56,7 @@ class ObjTestCase(unittest.TestCase):
         self.assertEqual(kwargs["first"], None)
         self.assertEqual(kwargs["second"], 5)
         self.assertEqual(kwargs["third"], [])
+        self.assertIn("zero", args)
 
 
 class Foo:
@@ -67,7 +68,7 @@ class Bar:
     def __init__(self, zero, first=None, second=5, third=[]):
         pass
 
-def foo(zero, first, second=5, third=[]):
+def foo(zero, first=None, second=5, third=[]):
     pass
 
 def main():
