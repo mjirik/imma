@@ -164,34 +164,6 @@ class DictListTestCase(unittest.TestCase):
         normal_dict = dili.ordered_dict_to_dict(od)
         self.assertEqual(type(normal_dict), dict)
 
-    def test_get_standard_arguments(self):
-        from collections import OrderedDict
-        args = dili.get_default_args(Foo)
-        self.assertEqual(type(args), OrderedDict)
-        self.assertIn("first", args)
-        self.assertEqual(args["first"], None)
-        self.assertEqual(args["second"], 5)
-        self.assertEqual(args["third"], [])
-
-    @unittest.skip("Waiting for implementation")
-    def test_get_standard_arguments_with_position_arg(self):
-        from collections import OrderedDict
-        args = dili.get_default_args(Bar)
-        self.assertEqual(type(args), OrderedDict)
-        self.assertIn("first", args)
-        self.assertEqual(args["first"], None)
-        self.assertEqual(args["second"], 5)
-        self.assertEqual(args["third"], [])
-
-
-class Foo:
-    def __init__(self, first=None, second=5, third=[]):
-        pass
-
-
-class Bar:
-    def __init__(self, zero, first=None, second=5, third=[]):
-        pass
 
 
 def main():
