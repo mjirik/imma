@@ -56,6 +56,7 @@ class ImageManipulationTest(unittest.TestCase):
         data[2, 1, 1] = 3
 
         dataSM = ima.SparseMatrix(data)
+        self.assertTrue(ima.isSparseMatrix(dataSM), "Check sparse matrix")
 
         data2 = dataSM.todense()
         self.assertTrue(np.all(data == data2))

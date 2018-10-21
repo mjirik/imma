@@ -185,10 +185,7 @@ class SparseMatrix():
 
 
 def isSparseMatrix(obj):
-    if obj.__class__.__name__ == 'SparseMatrix':
-        return True
-    else:
-        return False
+    return obj.__class__.__name__ == 'SparseMatrix'
 
 
 # import sed3
