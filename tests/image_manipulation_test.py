@@ -341,6 +341,13 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertLessEqual(np.min(data3d), np.min(data3d_rot))
         self.assertGreaterEqual(np.max(data3d), np.max(data3d_rot))
 
+    def test_seeds_inds(self):
+        datap = io3d.datasets.generate_abdominal()
+        seeds = datap["seeds"]
+        data3d = datap["data3d"]
+        sind = ima.as_seeds_inds(seeds, data3d.shape)
+        self.assertGreater(seeds[sind][0], 0, "First found seed should be non zero")
+
     def test_multiple_crop_and_uncrop_nearest_outside(self):
         """
         test combination of multiple crop

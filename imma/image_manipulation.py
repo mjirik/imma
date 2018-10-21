@@ -631,8 +631,6 @@ def rotate(data3d, phi_deg, theta_deg=None, phi_axes=(1, 2), theta_axes=(0, 1), 
     # segmentation = scipy.ndimage.interpolation.rotate(segmentation, angle, axes)
     # seeds = scipy.ndimage.interpolation.rotate(seeds, angle, axes)
 
-    return data3d
-
 
 def random_rotate_paramteres():
     """
@@ -658,9 +656,8 @@ def random_rotate_paramteres():
 
 
 def as_seeds_inds(seeds, datashape):
-    sh1 = datashape
-    sh2 = np.asarray(seeds).shape
-    if np.array_equal(sh1, sh2):
+    shape = np.asarray(seeds).shape
+    if datashape is not None and np.array_equal(shape, datashape):
         seeds_inds = np.nonzero(seeds)
     else:
         seeds_inds = seeds
