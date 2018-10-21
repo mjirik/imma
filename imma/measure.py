@@ -116,14 +116,14 @@ def objects_neighbors(labeled_ndarray, labels=None, exclude=None):
 
     output = [None] * len(bboxes)
     if labels is None:
-        labels = range(len(bboxes))
+        labels = range(1, len(bboxes) + 1)
     else:
         if type(labels) is not list:
             labels = [labels]
 
     for i in labels:
-        bbox = bboxes[i]
-        ilabel = i + 1
+        bbox = bboxes[i - 1]
+        ilabel = i
         if bbox is not None:
             exbbox = ima.extend_crinfo(bbox, labeled_ndarray.shape, bbox_margin)
             cropped_ndarray = labeled_ndarray[exbbox]
@@ -140,6 +140,6 @@ def objects_neighbors(labeled_ndarray, labels=None, exclude=None):
             # neighbors = neighbors[neighbors != 0]
             for exlabel in exclude:
                 neighbors = neighbors[neighbors != exlabel]
-            output[i] = list(neighbors)
+            output[i - 1] = list(neighbors)
 
     return output
