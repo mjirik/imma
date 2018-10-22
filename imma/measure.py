@@ -96,13 +96,14 @@ def cooccurrence_matrix(data, return_counts=True):
     return nbm
 
 
-def objects_neighbors(labeled_ndarray, labels=None, exclude=None):
+def neighbors_list(labeled_ndarray, labels=None, exclude=None):
     """
     Neighbors for one or more object. Objects with label 0 are ignored.
 
     :param labeled_ndarray: 3D ndarray
     :param labels: Integer label or list of ints. If is set to None, all labels are processed.
     :param exclude: List of labels to exclude.
+    Typically it is label of surrounding object (like liver around portal vein)
     :return:
     """
 
@@ -114,20 +115,23 @@ def objects_neighbors(labeled_ndarray, labels=None, exclude=None):
     bboxes = scipy.ndimage.find_objects(labeled_ndarray)
     bbox_margin = 1
 
-    output = [None] * len(bboxes)
     if labels is None:
-        labels = range(1, len(bboxes) + 1)
+        labels = range(0, len(bboxes) + 1)
     else:
         if type(labels) is not list:
             labels = [labels]
 
-    for i in labels:
-        bbox = bboxes[i - 1]
-        ilabel = i
+    output = [None] * len(labels)
+
+    for ilabel, label in enumerate(labels):
+        # labels in bboxes starts from 1
+        if label == 0:
+            continue
+        bbox = bboxes[label - 1]
         if bbox is not None:
             exbbox = ima.extend_crinfo(bbox, labeled_ndarray.shape, bbox_margin)
             cropped_ndarray = labeled_ndarray[exbbox]
-            object = (cropped_ndarray == ilabel)
+            object = (cropped_ndarray == label)
             dilat_element = scipy.ndimage.morphology.binary_dilation(
                 object,
                 structure=np.ones([3, 3, 3])
@@ -136,10 +140,34 @@ def objects_neighbors(labeled_ndarray, labels=None, exclude=None):
             neighborhood = cropped_ndarray[dilat_element]
 
             neighbors = np.unique(neighborhood)
-            neighbors = neighbors[neighbors != ilabel]
+            neighbors = neighbors[neighbors != label]
             # neighbors = neighbors[neighbors != 0]
             for exlabel in exclude:
                 neighbors = neighbors[neighbors != exlabel]
-            output[i - 1] = list(neighbors)
+            output[ilabel] = list(neighbors)
 
     return output
+
+
+def get_connected_labels(neighbors_list, start_label, ignore_labels=None):
+    if ignore_labels is None:
+        ignore_labels = []
+
+    import copy
+    nl = copy.copy(neighbors_list)
+
+    # nl.insert(0, None)
+    to_ignore = ignore_labels
+    to_process = set([start_label])
+    processed = set()
+    while len(to_process) > 0:
+        lab = to_process.pop()
+        if lab in to_ignore:
+            continue
+        if lab not in processed:
+            newn = nl[lab]
+            to_process.update(newn)
+        processed.add(lab)
+
+    return processed
+

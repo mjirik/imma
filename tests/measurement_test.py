@@ -100,13 +100,27 @@ class MeasurementTest(unittest.TestCase):
         data[0, 2:, 2] = 2
         data[0, 0, 1:] = 6
         # neighb, bbox = imma.measure.element_neighbors(data, 1)
-        neighbs = imma.measure.objects_neighbors(data)
+        neighbs = imma.measure.neighbors_list(data)
         print(neighbs)
 
-        self.assertTrue(np.array_equal(neighbs[0], [0, 2, 6]), "Label 1 is negbor to [0, 2, 6]")
-        self.assertTrue(np.array_equal(neighbs[1], [0, 1]), "Label 2 is negbor to [0, 1]")
+        self.assertTrue(np.array_equal(neighbs[1], [0, 2, 6]), "Label 1 is negbor to [0, 2, 6]")
+        self.assertTrue(np.array_equal(neighbs[2], [0, 1]), "Label 2 is negbor to [0, 1]")
         self.assertTrue(neighbs[3] is None, "Label 4 has no neighboor")
-        self.assertTrue(np.array_equal(neighbs[5], [0, 1]), "Label 6 is negbor to [0, 1]")
+        self.assertTrue(np.array_equal(neighbs[6], [0, 1]), "Label 6 is negbor to [0, 1]")
+
+    def test_element_neighboors_with_selected_labels(self):
+        data = np.zeros((1, 3, 4), dtype=int)
+        data[0, :3, 1] = 1
+        data[0, 2:, 2] = 2
+        data[0, 0, 1:] = 6
+        # neighb, bbox = imma.measure.element_neighbors(data, 1)
+        neighbs = imma.measure.neighbors_list(data, labels=[2, 6])
+        print(neighbs)
+
+        # self.assertTrue(np.array_equal(neighbs[1], [0, 2, 6]), "Label 1 is negbor to [0, 2, 6]")
+        self.assertTrue(np.array_equal(neighbs[0], [0, 1]), "Label 2 is negbor to [0, 1]")
+        # self.assertTrue(neighbs[3] is None, "Label 4 has no neighboor")
+        self.assertTrue(np.array_equal(neighbs[1], [0, 1]), "Label 6 is negbor to [0, 1]")
 
     def test_element_neighboors_with_exclude(self):
         data = np.zeros((1, 3, 4), dtype=int)
@@ -114,13 +128,13 @@ class MeasurementTest(unittest.TestCase):
         data[0, 2:, 2] = 2
         data[0, 0, 1:] = 6
         # neighb, bbox = imma.measure.element_neighbors(data, 1)
-        neighbs = imma.measure.objects_neighbors(data, exclude=[6])
+        neighbs = imma.measure.neighbors_list(data, exclude=[6])
         print(neighbs)
 
-        self.assertTrue(np.array_equal(neighbs[0], [0, 2]), "Label 1 is negbor to [0, 2, 6]")
-        self.assertTrue(np.array_equal(neighbs[1], [0, 1]), "Label 2 is negbor to [0, 1]")
-        self.assertTrue(neighbs[3] is None, "Label 4 has no neighboor")
-        self.assertTrue(np.array_equal(neighbs[5], [0, 1]), "Label 6 is negbor to [0, 1]")
+        self.assertTrue(np.array_equal(neighbs[1], [0, 2]), "Label 1 is negbor to [0, 2, 6]")
+        self.assertTrue(np.array_equal(neighbs[2], [0, 1]), "Label 2 is negbor to [0, 1]")
+        self.assertTrue(neighbs[4] is None, "Label 4 has no neighboor")
+        self.assertTrue(np.array_equal(neighbs[6], [0, 1]), "Label 6 is negbor to [0, 1]")
 
 
 if __name__ == "__main__":
