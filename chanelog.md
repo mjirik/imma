@@ -3,6 +3,11 @@
 ## Unreleased
 
 
+## 0.6.0
+
+* New function for connected labels
+* More tests
+* New API for neighbor list function
 
 
 ## 0.5.0
