@@ -31,7 +31,7 @@ def select_labels(segmentation, labels, slab=None):
     if slab is not None:
         labels = get_nlabels(slab, labels)
 
-    if type(labels) not in (list, np.ndarray):
+    if type(labels) not in (list, np.ndarray, set):
         labels = [labels]
 
     ds = np.zeros(segmentation.shape, np.bool)
