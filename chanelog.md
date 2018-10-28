@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* Modules reorganization with back compatibility
 
 ## 0.6.0
 
