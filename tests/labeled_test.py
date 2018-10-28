@@ -14,7 +14,7 @@ import os
 
 # import io3d
 import io3d.datasets
-import imma.labeled as ima
+import imma.labeled as imlb
 import imma.image as imim
 
 
@@ -25,9 +25,9 @@ class LabeledTest(unittest.TestCase):
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
-        crinfo_auto1 = ima.crinfo_from_specific_data(segmentation, [5])
-        crinfo_auto2 = ima.crinfo_from_specific_data(segmentation, 5)
-        crinfo_auto3 = ima.crinfo_from_specific_data(segmentation, [5, 5, 5])
+        crinfo_auto1 = imlb.crinfo_from_specific_data(segmentation, [5])
+        crinfo_auto2 = imlb.crinfo_from_specific_data(segmentation, 5)
+        crinfo_auto3 = imlb.crinfo_from_specific_data(segmentation, [5, 5, 5])
 
         crinfo_expected = [[0, 99], [20, 99], [45, 99]]
 
@@ -39,7 +39,7 @@ class LabeledTest(unittest.TestCase):
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
-        crinfo_auto1 = ima.crinfo_from_specific_data(segmentation, [5], with_slices=True)
+        crinfo_auto1 = imlb.crinfo_from_specific_data(segmentation, [5], with_slices=True)
         self.assertEqual(type(data3d[crinfo_auto1]), np.ndarray, "We are able to use slices in data.")
 
         crinfo_auto1 = imim.fix_crinfo(crinfo_auto1, with_slices=False)
@@ -58,7 +58,7 @@ class LabeledTest(unittest.TestCase):
         seeds = np.zeros(shape)
         seeds[9, 3:6, 3] = 1
 
-        selected = ima.select_objects_by_seeds(data, seeds)
+        selected = imlb.select_objects_by_seeds(data, seeds)
         # import sed3
         # ed =sed3.sed3(selected, contour=data, seeds=seeds)
         # ed.show()
@@ -77,7 +77,7 @@ class LabeledTest(unittest.TestCase):
         seeds[20:30, 20:30, 20:30] = 30
         seeds[20:30, 50:70, 20:30] = 60
         seeds[20:30, 10:200, 40:60] = 61
-        squeezed_seeds = ima.squeeze_labels(seeds)
+        squeezed_seeds = imlb.squeeze_labels(seeds)
         self.assertEqual(np.max(squeezed_seeds), 3)
 
     def test_squeeze_labels_with_negative_and_collision(self):
@@ -85,7 +85,7 @@ class LabeledTest(unittest.TestCase):
         seeds[20:30, 20:30, 20:30] = -10
         seeds[20:30, 50:70, 20:30] = 1
         seeds[20:30, 10:200, 40:60] = 61
-        squeezed_seeds = ima.squeeze_labels(seeds)
+        squeezed_seeds = imlb.squeeze_labels(seeds)
         self.assertEqual(np.max(squeezed_seeds), 3)
 
     def test_dist_segmentation(self):
@@ -98,7 +98,7 @@ class LabeledTest(unittest.TestCase):
         # plt.imshow(seeds, interpolation="nearest")
         # plt.show()
 
-        segm = ima.distance_segmentation(seeds)
+        segm = imlb.distance_segmentation(seeds)
 
         # plt.imshow(segm, interpolation="nearest")
         # plt.show()
@@ -112,7 +112,7 @@ class LabeledTest(unittest.TestCase):
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
-        selection = ima.select_labels(segmentation, 1)
+        selection = imlb.select_labels(segmentation, 1)
         self.assertGreater(np.sum(selection), 50, "select at least few pixels")
         # crinfo1 = ima.crinfo_from_specific_data(segmentation, [5])
         # crinfo2 = ima.extend_crinfo(crinfo1, data3d.shape, 3)
@@ -122,7 +122,7 @@ class LabeledTest(unittest.TestCase):
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
-        selection = ima.select_labels(segmentation, "liver", slab=datap["slab"])
+        selection = imlb.select_labels(segmentation, "liver", slab=datap["slab"])
         self.assertGreater(np.sum(selection), 50, "select at least few pixels")
 
 
@@ -130,7 +130,7 @@ class LabeledTest(unittest.TestCase):
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
-        seg_biggest = ima.get_one_biggest_object(segmentation)
+        seg_biggest = imlb.get_one_biggest_object(segmentation)
         # newlab = ima.get_nlabels(datap["slab"], "new", return_mode="str")
         self.assertEqual(type(seg_biggest), np.ndarray)
         self.assertTrue(np.array_equal(seg_biggest.shape, segmentation.shape))
@@ -144,11 +144,11 @@ class LabeledTest(unittest.TestCase):
         # import io3d.datasets
         # import imma.image_manipulation as ima
         datap = io3d.datasets.generate_abdominal()
-        bigges_area_label = ima.max_area_index(segmentation)
+        bigges_area_label = imlb.max_area_index(segmentation)
         self.assertEqual(bigges_area_label, slab["liver"])
 
         # test also the old version
-        bigges_area_label2 = ima.max_area_index2(segmentation, 30)
+        bigges_area_label2 = imlb.max_area_index2(segmentation, 30)
         self.assertEqual(bigges_area_label, bigges_area_label2)
 
     @unittest.skip("This test just checks the time requirements")
@@ -177,6 +177,30 @@ datap = io3d.datasets.generate_abdominal()
         # self.assertEqual(np.array_equal(seg_biggest.shape), segmentation.shape)
         self.assertGreater(t1, t0)
         # print(t0, t1)
+
+    def test_unique_labels_by_seeds(self):
+        labeled = np.zeros([10, 10])
+        labeled[:5, :5] = 1
+        labeled[5:10, :5] = 5
+        labeled[:5, 5:10] = 6
+        labeled[5:10, 5:10] = 13
+
+        seeds = np.zeros([10, 10])
+        seeds[2, 2] = 1
+        seeds[8, 2] = 1
+        seeds[:3, 8] = 2
+        seeds[8, 8:] = 5
+
+        expected_keys = [1, 2, 5]
+        expected_values = [[1, 5], [6], [13]]
+        unl = imlb.unique_labels_by_seeds(labeled, seeds)
+        keys = list(unl.keys())
+        values = list(unl.values())
+
+        self.assertTrue(np.array_equal(keys, expected_keys))
+        self.assertTrue(np.array_equal(values[0], expected_values[0]))
+        self.assertTrue(np.array_equal(values[1], expected_values[1]))
+        self.assertTrue(np.array_equal(values[2], expected_values[2]))
 
 
 if __name__ == "__main__":

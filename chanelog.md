@@ -3,6 +3,7 @@
 ## Unreleased
 
 * Modules reorganization with back compatibility
+* New function for getting unique labels by seeds
 
 ## 0.6.0
 

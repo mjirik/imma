@@ -222,3 +222,24 @@ def crinfo_from_specific_data(data, margin=0, with_slices=False):
         crinfo = [[x1, x2], [y1, y2], [z1, z2]]
     return crinfo
 
+
+def unique_labels_by_seeds(labeled, seeds, ignored_seeds=0):
+    """
+    Get labels on positions of seeds.
+    :param labeled: labeled ndimage
+    :param seeds: ndimage with seeds
+    :param ignored_seeds: int or list with labels to ignore, default ignored seed is 0
+    :return: Dictionary. Keys are seeds, values are unique labels corresponding to this seeds.
+    """
+
+    if type(ignored_seeds) is not list:
+        ignored_seeds = [ignored_seeds]
+    # un = np.unique(seeds)
+    # output = [None] * len(un)
+    output = {}
+    for seed in np.unique(seeds):
+        if seed not in ignored_seeds:
+            output[seed] = np.unique(labeled[seeds == seed])
+
+    return output
+
