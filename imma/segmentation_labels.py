@@ -132,4 +132,32 @@ def add_missing_labels(segmentation, slab):
     labels = np.unique(segmentation)
     get_nlabels(slab, labels)
 
+def minimize_slab(slab, segmentation, remove_doubled=True):
+    """
+    Check slab and kick out all not used or doubled values.
+    :param slab:
+    :param segmentation:
+    :return:
+    """
+    un = np.unique(segmentation)
+    unslab = np.unique(list(slab.values()))
+
+    kick_labels = []
+    keep_values = []
+    for label in slab:
+        val = slab[label]
+        if val in un:
+            if remove_doubled:
+                if val in keep_values:
+                    # it is doubled
+                    kick_labels.append(val)
+                else:
+                    keep_values.append(label)
+        else:
+            kick_labels.append(label)
+
+    for kicki in kick_labels:
+        slab.pop(kicki)
+
+    return slab
 

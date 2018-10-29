@@ -121,6 +121,23 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEqual(val[0], 2)
         self.assertEqual(val[1], "porta")
 
+    def test_minimize_slab(self):
+        segmentation = np.zeros([5, 5])
+        segmentation[:3, :2] = 1
+        segmentation[3:, :3] = 5
+
+        slab = {
+            "label1": 1,
+            "label2": 2,
+            "label5": 5,
+            "label22": 2
+        }
+
+        slab = imsl.minimize_slab(slab, segmentation)
+
+        self.assertEqual(len(slab), 2)
+        self.assertTrue(np.array_equal(list(slab.values()), [1, 5]))
+
 
 if __name__ == "__main__":
     unittest.main()

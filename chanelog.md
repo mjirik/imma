@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.9.0
+
+* New minimize segmentation labels (slab) function
+
 ## 0.8.0
 
 * New find list in lists function
