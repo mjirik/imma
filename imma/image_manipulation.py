@@ -10,7 +10,7 @@ import numpy as np
 import scipy
 import scipy.ndimage
 
-from io3d import dili
+from . import dili
 from .image import as_seeds_inds, fit_to_shape, \
     combinecrinfo, crop, fix_crinfo, extend_crinfo, manualcrop, \
     resize_to_shape, random_rotate_paramteres, resize_to_mm, rotate, uncrop

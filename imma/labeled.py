@@ -7,12 +7,8 @@ logger = logging.getLogger(__name__)
 import numpy as np
 import scipy
 
-import io3d
-
 from . import segmentation_labels
-
 ima = segmentation_labels
-
 
 def select_labels(segmentation, labels, slab=None):
     """
