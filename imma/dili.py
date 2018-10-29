@@ -282,6 +282,19 @@ def ordered_dict_to_dict(config):
 
     return config
 
+
+def find_in_list_of_lists(list_of_lists, value):
+    """
+    Find value in list of lists and return first found index of list.
+    :param list_of_lists:
+    :param value:
+    :return:
+    """
+    for i, lst in enumerate(list_of_lists):
+        if value in lst:
+            return i
+    return None
+
 # def struct_to_yaml(cfg):
 #     """
 #     write complex struct with dicts and lists into yaml

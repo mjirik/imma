@@ -172,6 +172,12 @@ class DictListTestCase(unittest.TestCase):
         # self.assertEqual(len(dfn.keys()), 2)
         self.assertEqual(len(dfn), 2)
 
+    def test_find_in_list_of_lists(self):
+        lst = [[5, 6, 7], [1, 13], [2, 9]]
+        self.assertEqual(dili.find_in_list_of_lists(lst, 7), 0)
+        self.assertEqual(dili.find_in_list_of_lists(lst, 13), 1)
+        self.assertEqual(dili.find_in_list_of_lists(lst, 9), 2)
+        self.assertEqual(dili.find_in_list_of_lists(lst, 50), None)
 
 def main():
     unittest.main()

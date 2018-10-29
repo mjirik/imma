@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+# 0.8.0
+
+* New find list in lists function
+
+## 0.7.0
+
 * Modules reorganization with back compatibility
 * New function for getting unique labels by seeds
 
