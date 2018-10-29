@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-# 0.8.0
+## 0.8.0
 
 * New find list in lists function
 
