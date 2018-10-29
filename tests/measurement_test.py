@@ -136,6 +136,22 @@ class MeasurementTest(unittest.TestCase):
         self.assertTrue(neighbs[4] is None, "Label 4 has no neighboor")
         self.assertTrue(np.array_equal(neighbs[6], [0, 1]), "Label 6 is negbor to [0, 1]")
 
+    def test_connected_elements(self):
+        data = np.zeros((1, 3, 4), dtype=int)
+        data[0, :3, 1] = 1
+        data[0, 2:, 2] = 2
+        data[0, 0, 1:] = 6
+        # neighb, bbox = imma.measure.element_neighbors(data, 1)
+        neighbs = imma.measure.neighbors_list(data)
+        connected  = imma.measure.get_connected_labels(neighbs, 6, ignore_labels=[0])
+        print(neighbs)
+
+
+        # self.assertTrue(np.array_equal(neighbs[1], [0, 2, 6]), "Label 1 is negbor to [0, 2, 6]")
+        self.assertTrue(np.array_equal(neighbs[2], [0, 1]), "Label 2 is negbor to [0, 1]")
+        # self.assertTrue(neighbs[3] is None, "Label 4 has no neighboor")
+        self.assertTrue(np.array_equal(neighbs[6], [0, 1]), "Label 6 is negbor to [0, 1]")
+        self.assertTrue(np.array_equal(list(connected), [1, 2, 6]), "All connected")
 
 if __name__ == "__main__":
     unittest.main()

@@ -157,12 +157,12 @@ def get_connected_labels(neighbors_list, start_label, ignore_labels=None):
     nl = copy.copy(neighbors_list)
 
     # nl.insert(0, None)
-    to_ignore = ignore_labels
+    # ignore_labels = ignore_labels
     to_process = set([start_label])
     processed = set()
     while len(to_process) > 0:
         lab = to_process.pop()
-        if lab in to_ignore:
+        if lab in ignore_labels:
             continue
         if lab not in processed:
             newn = nl[lab]
