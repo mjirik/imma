@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.10.0
+
+* New module geometry3d
+
 ## 0.9.0
 
 * New minimize segmentation labels (slab) function
