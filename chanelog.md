@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.12.0
+
+* [Added] color resize (and tests for 2D case)
+
 ## 0.10.0
 
 * New module geometry3d

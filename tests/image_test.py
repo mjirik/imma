@@ -32,6 +32,35 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEquals(new_shape[1], data_out.shape[1])
         self.assertEquals(new_shape[2], data_out.shape[2])
 
+    def test_resize_color_to_shape(self):
+        rgbimg = np.zeros([10, 10, 3], dtype=np.uint8)
+        rgbimg[:3, :3, :] = 255
+        rgbimg[5:, :5, 0] = 255
+        rgbimg[5:, 5:, 1] = 255
+        rgbimg[:5, 5:, 2] = 255
+        # plt.imshow(rgbimg)
+
+
+        new_shape = [100, 100]
+        imgres = ima.resize_to_shape(rgbimg, new_shape)
+
+        # plt.imshow(imgres)
+        # plt.colorbar()
+
+        red = imgres[70, 20]
+        blue = imgres[20, 70]
+        green = imgres[70, 70]
+        white = imgres[10, 10]
+
+        # display(red)V
+        # display(green)
+        # display(blue)
+        self.assertTrue(np.array_equal(red, [255, 0, 0]))
+        self.assertTrue(np.array_equal(green, [0, 255, 0]))
+        self.assertTrue(np.array_equal(blue, [0, 0, 255]))
+        self.assertTrue(np.array_equal(white, [255, 255, 255]))
+
+
     def test_resize_to_mm(self):
         data = np.random.rand(3, 4, 6)
         voxelsize_mm = [2, 3, 1]
@@ -44,6 +73,36 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEquals(expected_shape[0], data_out.shape[0])
         self.assertEquals(expected_shape[1], data_out.shape[1])
         self.assertEquals(expected_shape[2], data_out.shape[2])
+
+    def test_resize_color_to_mm(self):
+        rgbimg = np.zeros([10, 10, 3], dtype=np.uint8)
+        rgbimg[:3, :3, :] = 255
+        rgbimg[5:, :5, 0] = 255
+        rgbimg[5:, 5:, 1] = 255
+        rgbimg[:5, 5:, 2] = 255
+        # plt.imshow(rgbimg)
+
+
+        new_shape = [100, 100]
+        imgres = ima.resize_to_mm(rgbimg, voxelsize_mm=[1, 1], new_voxelsize_mm=[.1, .1])
+
+        # plt.imshow(imgres)
+        # plt.colorbar()
+
+        red = imgres[70, 20]
+        blue = imgres[20, 70]
+        green = imgres[70, 70]
+        white = imgres[10, 10]
+
+        # display(red)V
+        # display(green)
+        # display(blue)
+        self.assertTrue(np.array_equal(red, [255, 0, 0]))
+        self.assertTrue(np.array_equal(green, [0, 255, 0]))
+        self.assertTrue(np.array_equal(blue, [0, 0, 255]))
+        self.assertTrue(np.array_equal(white, [255, 255, 255]))
+
+
 
     def test_crop_and_uncrop(self):
         shape = [10, 10, 5]
