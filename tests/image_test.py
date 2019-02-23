@@ -55,7 +55,6 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertTrue(np.array_equal(blue, [0, 0, 255]))
         self.assertTrue(np.array_equal(white, [255, 255, 255]))
 
-
     def test_resize_to_mm(self):
         data = np.random.rand(3, 4, 6)
         voxelsize_mm = [2, 3, 1]
@@ -323,6 +322,7 @@ def make_color_image():
     rgbimg[5:, 5:, 1] = 255
     rgbimg[:5, 5:, 2] = 255
     return rgbimg
+
 
 if __name__ == "__main__":
     unittest.main()

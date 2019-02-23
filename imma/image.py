@@ -168,9 +168,9 @@ def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1
 
     # probably better implementation
     if len(data3d.shape) == len(voxelsize_mm):
-        new_shape = (data3d.shape * zoom).astype(np.int)
+        new_shape = np.ceil(data3d.shape * zoom).astype(np.int)
     elif len(data3d.shape) == (len(voxelsize_mm) + 1):
-        new_shape = (data3d.shape[:-1] * zoom).astype(np.int)
+        new_shape = np.ceil(data3d.shape[:-1] * zoom).astype(np.int)
     else:
         raise ValueError("Input shape is not compatible with giben voxelsize_mm.")
 
