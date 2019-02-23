@@ -33,15 +33,10 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEquals(new_shape[2], data_out.shape[2])
 
     def test_resize_color_to_shape(self):
-        rgbimg = np.zeros([10, 10, 3], dtype=np.uint8)
-        rgbimg[:3, :3, :] = 255
-        rgbimg[5:, :5, 0] = 255
-        rgbimg[5:, 5:, 1] = 255
-        rgbimg[:5, 5:, 2] = 255
+        rgbimg = make_color_image()
         # plt.imshow(rgbimg)
 
-
-        new_shape = [100, 100]
+        new_shape = [99, 99]
         imgres = ima.resize_to_shape(rgbimg, new_shape)
 
         # plt.imshow(imgres)
@@ -75,16 +70,11 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEquals(expected_shape[2], data_out.shape[2])
 
     def test_resize_color_to_mm(self):
-        rgbimg = np.zeros([10, 10, 3], dtype=np.uint8)
-        rgbimg[:3, :3, :] = 255
-        rgbimg[5:, :5, 0] = 255
-        rgbimg[5:, 5:, 1] = 255
-        rgbimg[:5, 5:, 2] = 255
+        rgbimg = make_color_image()
         # plt.imshow(rgbimg)
 
 
-        new_shape = [100, 100]
-        imgres = ima.resize_to_mm(rgbimg, voxelsize_mm=[1, 1], new_voxelsize_mm=[.1, .1])
+        imgres = ima.resize_to_mm(rgbimg, voxelsize_mm=[1, 1], new_voxelsize_mm=[.1001, .1001])
 
         # plt.imshow(imgres)
         # plt.colorbar()
@@ -324,6 +314,15 @@ class ImageManipulationTest(unittest.TestCase):
         # ed.show()
         self.assertLessEqual(np.min(data3d), np.min(data3d_rot))
         self.assertGreaterEqual(np.max(data3d), np.max(data3d_rot))
+
+
+def make_color_image():
+    rgbimg = np.zeros([10, 10, 3], dtype=np.uint8)
+    rgbimg[:3, :3, :] = 255
+    rgbimg[5:, :5, 0] = 255
+    rgbimg[5:, 5:, 1] = 255
+    rgbimg[:5, 5:, 2] = 255
+    return rgbimg
 
 if __name__ == "__main__":
     unittest.main()

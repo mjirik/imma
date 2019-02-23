@@ -148,15 +148,17 @@ def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1
     """
 
     if new_voxelsize_mm is 'orig':
-        new_voxelsize_mm = np.array(voxelsize_mm)
+        new_voxelsize_mm = np.asarray(voxelsize_mm)
 
     elif new_voxelsize_mm is 'orig*2':
-        new_voxelsize_mm = np.array(voxelsize_mm) * 2
+        new_voxelsize_mm = np.asarray(voxelsize_mm) * 2
     elif new_voxelsize_mm is 'orig*4':
-        new_voxelsize_mm = np.array(voxelsize_mm) * 4
+        new_voxelsize_mm = np.asarray(voxelsize_mm) * 4
+    else:
+        new_voxelsize_mm = np.asarray(new_voxelsize_mm)
         # vx_size = np.array(metadata['voxelsize_mm']) * 4
 
-    zoom = voxelsize_mm / (1.0 * np.array(new_voxelsize_mm))
+    zoom = voxelsize_mm / (1.0 * new_voxelsize_mm)
     # data3d_res = scipy.ndimage.zoom(
     #     data3d,
     #     zoom,
@@ -166,9 +168,9 @@ def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1
 
     # probably better implementation
     if len(data3d.shape) == len(voxelsize_mm):
-        new_shape = data3d.shape * zoom
+        new_shape = (data3d.shape * zoom).astype(np.int)
     elif len(data3d.shape) == (len(voxelsize_mm) + 1):
-        new_shape = data3d.shape[:-1] * zoom
+        new_shape = (data3d.shape[:-1] * zoom).astype(np.int)
     else:
         raise ValueError("Input shape is not compatible with giben voxelsize_mm.")
 
@@ -182,6 +184,7 @@ def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1
     ).astype(data3d.dtype)
 
     return data3d_res2
+
 
 def manualcrop(data):  # pragma: no cover
 
