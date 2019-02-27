@@ -133,6 +133,7 @@ def fit_to_shape(segm_orig_scale, shape, dtype):
 
     return segmentation
 
+
 def calculate_new_shape(shape, voxelsize_mm, new_voxelsize_mm):
     if new_voxelsize_mm is 'orig':
         new_voxelsize_mm = np.asarray(voxelsize_mm)

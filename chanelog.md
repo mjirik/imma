@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.13.0 
+
+* [Added] Function for computation new size of image after resize
+
 ## 0.12.0
 
 * [Added] color resize (and tests for 2D case)
