@@ -133,20 +133,7 @@ def fit_to_shape(segm_orig_scale, shape, dtype):
 
     return segmentation
 
-
-def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1):
-    """
-    Function can resize (grayscale or color) data3d or segmentation to specifed voxelsize_mm
-
-    :param data3d: input 2d or 3d array-like data with shape (rows, cols[, …][, color_dim]),
-    :param new_voxelsize_mm: requested voxelsize. List of 2 or 3 numbers. The color image is expected if
-    the dim of voxelsize_mm is N-1 (where N is dimension of input data)
-    Also string can be a used: 'orig', 'orig*2' and 'orig*4'.
-
-    :param voxelsize_mm: size of voxel
-    :param mode: default is 'edge'. Modes match the behaviour of numpy.pad
-    """
-
+def calculate_new_shape(shape, voxelsize_mm, new_voxelsize_mm):
     if new_voxelsize_mm is 'orig':
         new_voxelsize_mm = np.asarray(voxelsize_mm)
 
@@ -167,12 +154,30 @@ def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1
     # ).astype(data3d.dtype)
 
     # probably better implementation
-    if len(data3d.shape) == len(voxelsize_mm):
-        new_shape = np.ceil(data3d.shape * zoom).astype(np.int)
-    elif len(data3d.shape) == (len(voxelsize_mm) + 1):
-        new_shape = np.ceil(data3d.shape[:-1] * zoom).astype(np.int)
+    if len(shape) == len(voxelsize_mm):
+        new_shape = np.ceil(shape * zoom).astype(np.int)
+    elif len(shape) == (len(voxelsize_mm) + 1):
+        new_shape = np.ceil(shape[:-1] * zoom).astype(np.int)
     else:
         raise ValueError("Input shape is not compatible with giben voxelsize_mm.")
+
+    return new_shape
+
+
+def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1):
+    """
+    Function can resize (grayscale or color) data3d or segmentation to specifed voxelsize_mm
+
+    :param data3d: input 2d or 3d array-like data with shape (rows, cols[, …][, color_dim]),
+    :param new_voxelsize_mm: requested voxelsize. List of 2 or 3 numbers. The color image is expected if
+    the dim of voxelsize_mm is N-1 (where N is dimension of input data)
+    Also string can be a used: 'orig', 'orig*2' and 'orig*4'.
+
+    :param voxelsize_mm: size of voxel
+    :param mode: default is 'edge'. Modes match the behaviour of numpy.pad
+    """
+
+    new_shape = calculate_new_shape(data3d.shape, voxelsize_mm, new_voxelsize_mm)
 
     import skimage.transform
     # Now we need reshape  seeds and segmentation to original size
