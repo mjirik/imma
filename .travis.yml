@@ -53,20 +53,6 @@ install:
     - conda install --yes pip nose coveralls
 #    - Install dependencies
     - conda install --yes -c SimpleITK -c luispedro -c mjirik --file requirements_conda.txt
-#    - pip install -r requirements_pip.txt
-#    - "echo $LD_LIBRARY_PATH"
-#    - "pip install -r requirements.txt"
-#    - 'mkdir build'
-#    - "cd build"
-#    - "cmake .."
-#    - "cmake --build ."
-#    - "sudo make install"
-#    - pip install .
-#    - "cd .."
-#    - 'echo "include /usr/local/lib" | sudo tee -a /etc/ld.so.conf'
-#    - 'sudo ldconfig -v'
-#    - conda list -e
-# command to run tests
 script: nosetests --with-coverage --cover-package=imma
 after_success:
     - coveralls
