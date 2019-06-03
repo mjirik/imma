@@ -1,10 +1,10 @@
 package:
   name: imma
-  version: "0.12.2"
+  version: "0.13.1"
 
 source:
 # this is used for build from git hub
-  git_rev: 0.12.2
+  git_rev: 0.13.1
   git_url: https://github.com/mjirik/imma.git
 
 # this is used for pypi
