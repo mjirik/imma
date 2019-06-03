@@ -160,7 +160,7 @@ def calculate_new_shape(shape, voxelsize_mm, new_voxelsize_mm):
     elif len(shape) == (len(voxelsize_mm) + 1):
         new_shape = np.ceil(shape[:-1] * zoom).astype(np.int)
     else:
-        raise ValueError("Input shape is not compatible with giben voxelsize_mm.")
+        raise ValueError("Input shape is not compatible with given voxelsize_mm.")
 
     return new_shape
 

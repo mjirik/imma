@@ -39,17 +39,23 @@ def get_nlabels(slab, labels, labels_meta=None, return_mode="num", return_first=
         nlabels = nlabels[0]
     return nlabels
 
+def get_free_numeric_label(slab, minimum=1):
+    i = minimum
+    while i in slab.values():
+        i += 1
+    return i
 
-def get_nlabel(slab, label, label_meta=None, return_mode="num"):
+def get_nlabel(slab, label, label_meta=None, return_mode="num", min_free_label=1):
     """
     Add label if it is necessery and return its numeric value.
 
-    If "new" keyword is used and no other information is provided, the max + 1 label is created.
+    If "new" keyword is used and no other information is provided, the first free label is created.
     If "new" keyword is used and additional numeric info is provided, the number is used also as a key.
     :param return_mode: Set requested label return type. "int", "num", "numeric" or "str" or "both".
     "both" means (numlabel, strlabel).
     :param label: string, number or "new"
     :param label_meta: string, number or "new
+    :param min_free_label: minimal value for label when new is created
     :return:
     """
     # todo add add_new and dont_add parameters to have fine control over adding new keys in slab
@@ -58,7 +64,8 @@ def get_nlabel(slab, label, label_meta=None, return_mode="num"):
     if type(label) == str:
         if label_meta is None:
             if label not in slab.keys():
-                free_numeric_label = np.max(list(slab.values())) + 1
+                free_numeric_label = get_free_numeric_label(slab, minimum=min_free_label)
+                # free_numeric_label = np.max(list(slab.values())) + 1
                 if label == "new":
                     label = str(free_numeric_label)
                 slab[label] = free_numeric_label

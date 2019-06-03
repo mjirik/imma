@@ -60,6 +60,23 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEqual(val, 2)
         self.assertEqual(len(slab), 2)
 
+    def test_get_free_label(self):
+        slab = {"liver": 1, "porta": 2}
+        val = imsl.get_free_numeric_label(slab)
+        self.assertEqual(val, 3)
+
+        slab = {"liver": 1, "porta": 4}
+        val = imsl.get_free_numeric_label(slab)
+        self.assertEqual(val, 2)
+
+        slab = {"liver": 1, "porta": 4}
+        val = imsl.get_free_numeric_label(slab, 3)
+        self.assertEqual(val, 3)
+
+        slab = {"liver": 1, "porta": 3}
+        val = imsl.get_free_numeric_label(slab, 3)
+        self.assertEqual(val, 4)
+
     def test_simple_string_get_nlabel(self):
         slab = {"liver": 1, "porta": 2}
         val = imsl.get_nlabel(slab, "porta")

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.14.0
+
+* [Changed] Use first free label (not the maximum + 1)when new is created
+
 ## 0.13.0 
 
 * [Added] Function for computation new size of image after resize
