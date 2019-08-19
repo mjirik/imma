@@ -62,55 +62,41 @@ def as_seeds_inds(seeds, datashape):
     return seeds_inds
 
 
-def resize_to_shape(data, shape, zoom=None, mode='reflect', order=0):
+def resize_to_shape(
+        data, shape, zoom=None, mode="constant", order=0, dtype=None, check_seeds=False,
+                        anti_aliasing=False, **kwargs
+):
+
     """Resize input (gray-scale or color) data to specific shape.
 
     :param data: input 2d or 3d array-like data with shape (rows, cols[, …][, color_dim]),
     :param shape: shape of output data. Dimension should be N-1 for color images.
     :param zoom: zoom is used for back compatibility
-    :mode: default is 'nearest'
+    :param dtype: default None, It can be set to dtype from numpy or "orig" - use the data.dtype
+    :param mode: default is 'nearest'
     """
-    # @TODO remove old code in except part
 
     if np.array_equal(data.shape, shape) or ((len(data.shape) ==  len(shape) + 1) and (np.array_equal(data.shape[:-1], shape))):
         # if output shape is same (for color the color number dimension is not checked)
         return data
 
-    try:
-        # rint 'pred vyjimkou'
-        # aise Exception ('test without skimage')
-        # rint 'za vyjimkou'
-        import skimage
-        import skimage.transform
-        # Now we need reshape  seeds and segmentation to original size
+    import skimage.transform
 
-        segm_orig_scale = skimage.transform.resize(
-            data, shape, order=order,
-            preserve_range=True,
-            mode=mode,
-        )
-
-        segmentation = segm_orig_scale
-        logger.debug('resize to orig with skimage')
-    except ImportError:
-        DeprecationWarning("Resize by scipy will be removed in the future")
-        mode = 'nearest'
-        import scipy
-        import scipy.ndimage
+    if dtype is "orig":
         dtype = data.dtype
-        if zoom is None:
-            zoom = np.asarray(data.shape).astype(np.double) / shape
 
-        segm_orig_scale = scipy.ndimage.zoom(
-            data,
-            1.0 / zoom,
-            mode=mode,
-            order=order
-        ).astype(dtype)
-        logger.debug('resize to orig with scipy.ndimage')
+    segm_orig_scale = skimage.transform.resize(
+        data, shape, order=order, preserve_range=True, mode=mode, anti_aliasing=anti_aliasing, **kwargs
+    )
 
-        segmentation = fit_to_shape(segm_orig_scale, shape, dtype)
-        del segm_orig_scale
+    segmentation = segm_orig_scale
+    logger.debug("resize to orig with skimage")
+    if dtype is not None:
+        logger.debug(f"changing dtype to {dtype}")
+        segmentation = segmentation.astype(dtype=dtype)
+    if check_seeds:
+        if not np.array_equal(np.unique(data), np.unique(segmentation)):
+            logger.warning("Input levels are different from output levels")
     return segmentation
 
 
