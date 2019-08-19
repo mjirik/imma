@@ -55,9 +55,11 @@ before_install:
 
 # command to install dependencies
 install:
-    - conda install --yes pip nose coveralls
+#    - conda install --yes pip nose coveralls
 #    - Install dependencies
-    - conda install --yes -c SimpleITK -c luispedro -c mjirik --file requirements_conda.txt
-script: nosetests --with-coverage --cover-package=imma
+    - conda install --yes -c SimpleITK -c luispedro -c mjirik --file requirements_conda.txt pytest-cov
+script: # nosetests --with-coverage --cover-package=imma
+#  - source activate travis
+  - python -m pytest --cov=imma/
 after_success:
     - coveralls
