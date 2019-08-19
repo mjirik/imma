@@ -38,11 +38,13 @@ requirements:
     - setuptools
     - numpy
     - scipy
+    - scikit-image
 
   run:
     - python
     - numpy
     - scipy
+    - scikit-image
     # - numpy
     # - pyqt 4.11.*
 
