@@ -112,7 +112,7 @@ def recursive_update(d, u):
     return d
 
 
-from collections import Mapping
+import collections
 from operator import add
 
 _FLAG_FIRST = object()
@@ -159,7 +159,7 @@ def flatten_dict(dct, separator=None, join=add, lift=lambda x: x):
     def visit(subdict, results, partialKey):
         for k, v in subdict.items():
             newKey = lift(k) if partialKey == _FLAG_FIRST else join(partialKey, lift(k))
-            if isinstance(v, Mapping):
+            if isinstance(v, collections.Mapping):
                 visit(v, results, newKey)
             else:
                 results.append((newKey, v))
