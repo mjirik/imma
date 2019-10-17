@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
-import logging
+from loguru import logger
 
-logger = logging.getLogger(__name__)
+
 import numpy as np
 
 import unittest

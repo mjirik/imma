@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import logging
+from loguru import logger
 
-logger = logging.getLogger(__name__)
+
 import unittest
 import numpy as np
 import imma.geometry3d as g3

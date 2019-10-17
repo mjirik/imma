@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import logging
+from loguru import logger
 
-logger = logging.getLogger(__name__)
+
 
 import numpy as np
 from scipy.spatial.distance import cdist

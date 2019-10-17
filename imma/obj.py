@@ -4,9 +4,9 @@
 """
 Module is provides funcions for dict lists and functions processing
 """
-import logging
+from loguru import logger
 
-logger = logging.getLogger(__name__)
+
 import collections
 import inspect
 

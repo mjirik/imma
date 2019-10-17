@@ -2,15 +2,22 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
-import logging
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 import numpy as np
 
 import unittest
 from collections import OrderedDict
 from imma import dili
+import pytest
 
+
+def test_get_fcn_params():
+    def test_fcn(a, b, c=1):
+        return a + b + c
+
+    args = dili.get_default_args(test_fcn)
+    logger.debug(f"args: {args}")
+    assert args[0] == 'b'
 
 class DictListTestCase(unittest.TestCase):
     def generate_dict_data(self):
