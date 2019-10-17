@@ -12,12 +12,21 @@ import pytest
 
 
 def test_get_fcn_params():
-    def test_fcn(a, b, c=1):
+    def test_fcn(a, b, c=1, d=2):
         return a + b + c
 
-    args = dili.get_default_args(test_fcn)
-    logger.debug(f"args: {args}")
-    assert args[0] == 'b'
+    class MyTestObj():
+        def __init__(self, oa, ob, oc=1, od=2):
+            pass
+
+    myobj = MyTestObj(1, 2)
+    argsf = dili.get_default_kwargs(test_fcn)
+    argso = dili.get_default_kwargs(MyTestObj)
+    argsi = dili.get_default_kwargs(myobj)
+    logger.debug(f"argsf: {argsf}")
+    assert argsf['c'] == 1
+    assert argso['oc'] == 1
+    assert argsi['oc'] == 1
 
 class DictListTestCase(unittest.TestCase):
     def generate_dict_data(self):

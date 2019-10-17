@@ -10,17 +10,20 @@ import inspect
 import copy
 import numpy as np
 
-def get_default_args(obj):
+def get_default_kwargs(obj):
     if "__init__" in dir(obj):
         if inspect.isfunction(obj.__init__) or inspect.ismethod(obj.__init__):
-            argspec = inspect.getargspec(obj.__init__)
+            argspec = inspect.getfullargspec(obj.__init__)
         else:
-            argspec = inspect.getargspec(obj)
+            argspec = inspect.getfullargspec(obj)
     else:
-        argspec = inspect.getargspec(obj)
+        argspec = inspect.getfullargspec(obj)
 
-    args = argspec.args[1:]
+    dif = len(argspec.args) - len(argspec.defaults)
+    args = argspec.args[dif:]
     defaults = argspec.defaults
+    # args = argspec.args[1:]
+    # defaults = argspec.defaults
     dc = collections.OrderedDict(zip(args, defaults))
     return dc
 
