@@ -39,14 +39,14 @@ requirements:
     - numpy
     - scipy
     - scikit-image
-    - logguru
+    - loguru
 
   run:
     - python
     - numpy
     - scipy
     - scikit-image
-    - logguru
+    - loguru
     # - numpy
     # - pyqt 4.11.*
 
