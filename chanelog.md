@@ -6,6 +6,7 @@
 
 * [Changed] Fixed `resize_to_shape` api.
 * [Changed] Use first free label (not the maximum + 1)when new is created
+* [Changed] Fixed `resize_to_mm` api.
 
 ## 0.13.0 
 

@@ -151,7 +151,9 @@ def calculate_new_shape(shape, voxelsize_mm, new_voxelsize_mm):
     return new_shape
 
 
-def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1):
+def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1, anti_aliasing=False,
+                 preserve_range=True, **kwargs
+                 ):
     """
     Function can resize (grayscale or color) data3d or segmentation to specifed voxelsize_mm
 
@@ -162,6 +164,7 @@ def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1
 
     :param voxelsize_mm: size of voxel
     :param mode: default is 'edge'. Modes match the behaviour of numpy.pad
+    :param kwargs: skimage.transform.resize parameteres
     """
 
     new_shape = calculate_new_shape(data3d.shape, voxelsize_mm, new_voxelsize_mm)
@@ -172,7 +175,8 @@ def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1
     data3d_res2 = skimage.transform.resize(
         data3d, new_shape, order=order,
         mode=mode,
-        preserve_range=True
+        preserve_range=preserve_range,
+        anti_aliasing=anti_aliasing
     ).astype(data3d.dtype)
 
     return data3d_res2
