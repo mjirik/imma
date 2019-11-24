@@ -176,7 +176,8 @@ def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1
         data3d, new_shape, order=order,
         mode=mode,
         preserve_range=preserve_range,
-        anti_aliasing=anti_aliasing
+        anti_aliasing=anti_aliasing,
+        **kwargs
     ).astype(data3d.dtype)
 
     return data3d_res2
