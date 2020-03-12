@@ -10,6 +10,13 @@ import inspect
 import copy
 import numpy as np
 
+import sys
+from collections import Mapping, Set, Sequence
+
+# dual python 2/3 compatability, inspired by the "six" library
+string_types = (str) if str is bytes else (str, bytes)
+iteritems = lambda mapping: getattr(mapping, 'iteritems', mapping.items)()
+
 def get_default_kwargs(obj):
     if "__init__" in dir(obj):
         if inspect.isfunction(obj.__init__) or inspect.ismethod(obj.__init__):
@@ -331,3 +338,66 @@ def find_in_list_of_lists(list_of_lists, value):
 #             isconverted[key] = True
 #             cfg[key] = yaml.dump(value, default_flow_style=True)
 #     return cfg
+
+
+def objwalk(obj, path=(), memo=None):
+    if memo is None:
+        memo = set()
+    iterator = None
+    if isinstance(obj, Mapping):
+        iterator = iteritems
+    elif isinstance(obj, (Sequence, Set)) and not isinstance(obj, string_types):
+        iterator = enumerate
+    if iterator:
+        if id(obj) not in memo:
+            memo.add(id(obj))
+            for path_component, value in iterator(obj):
+                for result in objwalk(value, path + (path_component,), memo):
+                    yield result
+            memo.remove(id(obj))
+    else:
+        yield path, obj
+
+def find_value_in_struct(structure, value):
+    for pth, obj in objwalk(structure):
+        #a.append([type(pth), pth])
+        if obj == value:
+            return pth, obj
+
+
+def find_in_struct(structure, keys):
+    """
+    Find and return path to first existing key.
+
+    Allways return the path to the deepest possible key.
+
+    :param structure: structure of lists or dicts.
+    :param keys: one or more keys. The order of keys is irrelevant.
+    :return: 
+    """
+    if type(keys) in (list, tuple):
+        pass
+    else:
+        keys = [keys]
+    for pth, obj in objwalk(structure):
+        #a.append([type(pth), pth])
+        all_keys_found = True
+        for key in keys:
+            if key in pth:
+                pass
+            else:
+                all_keys_found = False
+        if all_keys_found:
+            return list(pth)
+
+def set_in_struct(structure, pth, val):
+    struct = structure
+    for pthi in pth[:-1]:
+        struct = struct[pthi]
+    struct[pth[-1]] = val
+
+def pick_from_struct(structure, pth):
+    struct = structure
+    for pthi in pth:
+        struct = struct[pthi]
+    return struct

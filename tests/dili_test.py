@@ -195,5 +195,50 @@ class DictListTestCase(unittest.TestCase):
         self.assertEqual(dili.find_in_list_of_lists(lst, 9), 2)
         self.assertEqual(dili.find_in_list_of_lists(lst, 50), None)
 
+    def test_find_value_in_struct(self):
+
+        struct = {
+            "bool": True,
+            "int": 5,
+            'str': 'strdrr',
+            'vs': [1.0, 2.5, 7],
+            'data': {"complex":{"real": 1.0, "imag":0.5}},
+            "real": 1.1
+        }
+
+        dfn = dili.find_value_in_struct(struct, 5)
+        assert len(dfn) > 0
+        # self.assertEqual(len(dfn.keys()), 2)
+        # self.assertEqual(len(dfn), 2)
+
+    def test_find_in_struct(self):
+        struct = {
+            "bool": True,
+            "int": 5,
+            'str': 'strdrr',
+            'vs': [1.0, 2.5, 7],
+            'data': {"complex":{"real": 1.0, "imag":0.5}},
+            "real": 1.1
+        }
+
+        dfn = dili.find_in_struct(struct, "bool")
+        assert dfn == ["bool"]
+
+        dfn = dili.find_in_struct(struct, ["complex", "data"])
+        # this is probably not expected behavior
+        assert dfn == ["data", "complex", "real"]
+
+        dfn = dili.find_in_struct(struct, "real")
+        assert dfn == ["data", "complex", "real"]
+
+        val = dili.pick_from_struct(struct, dfn)
+        val = 100
+
+        dili.set_in_struct(struct, dfn, 10)
+        assert struct["data"]["complex"]["real"] == 10
+
+
+
+
 def main():
     unittest.main()

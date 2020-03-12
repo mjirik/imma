@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* [Addrd] New function for search in struct based on lists and dicts.
+
 ## 0.14.0
 
 * [Changed] Fixed `resize_to_shape` api.
