@@ -1,10 +1,10 @@
 package:
   name: imma
-  version: "0.14.9"
+  version: "0.14.12"
 
 source:
 # this is used for build from git hub
-  git_rev: 0.14.9
+  git_rev: 0.14.12
   git_url: https://github.com/mjirik/imma.git
 
 # this is used for pypi
@@ -15,7 +15,8 @@ source:
    # List any patch files here
    # - fix.patch
 
-# build:
+build:
+    noarch: python
   # noarch_python: True
   # preserve_egg_dir: True
   # entry_points:
