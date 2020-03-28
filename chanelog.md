@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-* [Addrd] New function for search in struct based on lists and dicts.
+* [Added] New function for search in struct based on lists and dicts.
+* [Added] New finction for fill unknown values
 
 ## 0.14.0
 

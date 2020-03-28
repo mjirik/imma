@@ -358,6 +358,7 @@ def objwalk(obj, path=(), memo=None):
     else:
         yield path, obj
 
+
 def find_value_in_struct(structure, value):
     for pth, obj in objwalk(structure):
         #a.append([type(pth), pth])
@@ -390,11 +391,13 @@ def find_in_struct(structure, keys):
         if all_keys_found:
             return list(pth)
 
+
 def set_in_struct(structure, pth, val):
     struct = structure
     for pthi in pth[:-1]:
         struct = struct[pthi]
     struct[pth[-1]] = val
+
 
 def pick_from_struct(structure, pth):
     struct = structure

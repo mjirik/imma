@@ -6,6 +6,7 @@ from loguru import logger
 
 import numpy as np
 import scipy
+from scipy.ndimage import morphology
 
 from . import segmentation_labels
 ima = segmentation_labels
@@ -238,4 +239,15 @@ def unique_labels_by_seeds(labeled, seeds, ignored_seeds=0):
             output[seed] = np.unique(labeled[seeds == seed])
 
     return output
+
+
+def fill_by_nearest(segmentation:np.ndarray, unknown_value=0):
+    """
+    Fill unknown values by the nearest eucleidan values.
+    :param segmentation: ndarray, segmentation
+    :param unknown_value: how is represented unknown value
+    :return:
+    """
+    dst, inds = morphology.distance_transform_edt(segmentation == unknown_value, return_indices=True)
+    return segmentation[tuple([*inds])]
 

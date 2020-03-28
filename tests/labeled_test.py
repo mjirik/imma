@@ -178,30 +178,42 @@ datap = io3d.datasets.generate_abdominal()
         self.assertGreater(t1, t0)
         # print(t0, t1)
 
-    def test_unique_labels_by_seeds(self):
-        labeled = np.zeros([10, 10])
-        labeled[:5, :5] = 1
-        labeled[5:10, :5] = 5
-        labeled[:5, 5:10] = 6
-        labeled[5:10, 5:10] = 13
+def test_unique_labels_by_seeds():
+    labeled = np.zeros([10, 10])
+    labeled[:5, :5] = 1
+    labeled[5:10, :5] = 5
+    labeled[:5, 5:10] = 6
+    labeled[5:10, 5:10] = 13
 
-        seeds = np.zeros([10, 10])
-        seeds[2, 2] = 1
-        seeds[8, 2] = 1
-        seeds[:3, 8] = 2
-        seeds[8, 8:] = 5
+    seeds = np.zeros([10, 10])
+    seeds[2, 2] = 1
+    seeds[8, 2] = 1
+    seeds[:3, 8] = 2
+    seeds[8, 8:] = 5
 
-        expected_keys = [1, 2, 5]
-        expected_values = [[1, 5], [6], [13]]
-        unl = imlb.unique_labels_by_seeds(labeled, seeds)
-        keys = list(unl.keys())
-        values = list(unl.values())
+    expected_keys = [1, 2, 5]
+    expected_values = [[1, 5], [6], [13]]
+    unl = imlb.unique_labels_by_seeds(labeled, seeds)
+    keys = list(unl.keys())
+    values = list(unl.values())
 
-        self.assertTrue(np.array_equal(keys, expected_keys))
-        self.assertTrue(np.array_equal(values[0], expected_values[0]))
-        self.assertTrue(np.array_equal(values[1], expected_values[1]))
-        self.assertTrue(np.array_equal(values[2], expected_values[2]))
+    assert np.array_equal(keys, expected_keys)
+    assert np.array_equal(values[0], expected_values[0])
+    assert np.array_equal(values[1], expected_values[1])
+    assert np.array_equal(values[2], expected_values[2])
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_fill_values():
+
+    labeled = np.zeros([10, 10])
+    labeled[:5, :5] = 1
+    labeled[5:10, :5] = 5
+    filled = imlb.fill_by_nearest(labeled)
+    un = np.unique(filled)
+    assert 1 in un
+    assert 5 in un
+    assert len(un) == 2
+    assert filled[1, 9] == 1
+    assert filled[9, 8] == 5
+    assert filled.shape==(10,10)
+
