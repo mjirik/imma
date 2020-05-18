@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* [Added] Make mask from VIA annotation
 * [Added] New function for search in struct based on lists and dicts.
 * [Added] New finction for fill unknown values
 
