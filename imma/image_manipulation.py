@@ -20,8 +20,8 @@ from .segmentation_labels import get_nlabel, add_missing_labels, add_slab_label_
     get_nlabels, update_slab
 from .sparse import isSparseMatrix, SparseMatrix
 
-path_to_script = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(path_to_script, "../extern/sed3"))
+# path_to_script = os.path.dirname(os.path.abspath(__file__))
+# sys.path.append(os.path.join(path_to_script, "../extern/sed3"))
 
 
 
