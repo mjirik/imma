@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from loguru import logger
+
 logger.enable("imma")
 
 # import funkcí z jiného adresáře
@@ -19,9 +20,7 @@ import imma.segmentation_labels as imsg
 import imma.labeled as imlb
 
 
-
 class ImageManipulationTest(unittest.TestCase):
-
     def test_resize_to_shape(self):
         data = np.random.rand(3, 4, 5)
         new_shape = [5, 6, 6]
@@ -73,8 +72,9 @@ class ImageManipulationTest(unittest.TestCase):
         rgbimg = make_color_image()
         # plt.imshow(rgbimg)
 
-
-        imgres = ima.resize_to_mm(rgbimg, voxelsize_mm=[1, 1], new_voxelsize_mm=[.1001, .1001])
+        imgres = ima.resize_to_mm(
+            rgbimg, voxelsize_mm=[1, 1], new_voxelsize_mm=[0.1001, 0.1001]
+        )
 
         # plt.imshow(imgres)
         # plt.colorbar()
@@ -92,8 +92,6 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertTrue(np.array_equal(blue, [0, 0, 255]))
         self.assertTrue(np.array_equal(white, [255, 255, 255]))
 
-
-
     def test_crop_and_uncrop(self):
         shape = [10, 10, 5]
         img_in = np.random.random(shape)
@@ -106,14 +104,17 @@ class ImageManipulationTest(unittest.TestCase):
 
         self.assertTrue(img_uncropped[4, 4, 3] == img_in[4, 4, 3])
 
-
     def test_extend_crinfo(self):
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
         crinfo1 = imlb.crinfo_from_specific_data(segmentation, [5])
         crinfo2 = ima.extend_crinfo(crinfo1, data3d.shape, 3)
-        self.assertEqual(type(data3d[crinfo2]), np.ndarray, "We are able to use slices in data with extended crinfo.")
+        self.assertEqual(
+            type(data3d[crinfo2]),
+            np.ndarray,
+            "We are able to use slices in data with extended crinfo.",
+        )
 
     def test_multiple_crop_and_uncrop(self):
         """
@@ -149,12 +150,12 @@ class ImageManipulationTest(unittest.TestCase):
         crinfo1 = [
             sorted(np.random.randint(0, shape[0], 2)),
             sorted(np.random.randint(0, shape[1], 2)),
-            sorted(np.random.randint(0, shape[2], 2))
+            sorted(np.random.randint(0, shape[2], 2)),
         ]
         crinfo2 = [
             sorted(np.random.randint(0, shape[0], 2)),
             sorted(np.random.randint(0, shape[1], 2)),
-            sorted(np.random.randint(0, shape[2], 2))
+            sorted(np.random.randint(0, shape[2], 2)),
         ]
 
         img_cropped = ima.crop(img_in, crinfo1)
@@ -174,11 +175,13 @@ class ImageManipulationTest(unittest.TestCase):
         # if np.all((cr_com[:, 1] - cr_com[:, 0]) > 1):
         if np.all(img_cropped.shape > 1):
             # sometimes the combination of crinfo has zero size in one dimension
-            sonda = np.array([
-                np.random.randint(crinfo_combined[0][0], crinfo_combined[0][1] - 1),
-                np.random.randint(crinfo_combined[1][0], crinfo_combined[1][1] - 1),
-                np.random.randint(crinfo_combined[2][0], crinfo_combined[2][1] - 1),
-            ])
+            sonda = np.array(
+                [
+                    np.random.randint(crinfo_combined[0][0], crinfo_combined[0][1] - 1),
+                    np.random.randint(crinfo_combined[1][0], crinfo_combined[1][1] - 1),
+                    np.random.randint(crinfo_combined[2][0], crinfo_combined[2][1] - 1),
+                ]
+            )
             sonda_intensity_uncropped = img_uncropped[sonda[0], sonda[1], sonda[2]]
             sonda_intensity_in = img_in[sonda[0], sonda[1], sonda[2]]
             self.assertEquals(sonda_intensity_in, sonda_intensity_uncropped)
@@ -217,7 +220,7 @@ class ImageManipulationTest(unittest.TestCase):
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
-        #orig shape 100x100x100
+        # orig shape 100x100x100
         shape = [95, 117, 100]
         new_seg = ima.fit_to_shape(segmentation, shape, segmentation.dtype)
         self.assertTrue(np.array_equal(new_seg.shape, shape))
@@ -255,13 +258,31 @@ class ImageManipulationTest(unittest.TestCase):
         # ed.show()
         self.assertTrue(img_uncropped[4, 4, 3] == img_in[4, 4, 3])
 
-        self.assertTrue(img_uncropped[crinfo1[0][0], 5, 3] == img_uncropped[0, 5, 3], msg="pixels under crop")
-        self.assertTrue(img_uncropped[5, crinfo1[1][0], 3] == img_uncropped[5, 0, 3], msg="pixels under crop")
-        self.assertTrue(img_uncropped[7, 3, crinfo1[2][0]] == img_uncropped[7, 3, 0], msg="pixels under crop")
+        self.assertTrue(
+            img_uncropped[crinfo1[0][0], 5, 3] == img_uncropped[0, 5, 3],
+            msg="pixels under crop",
+        )
+        self.assertTrue(
+            img_uncropped[5, crinfo1[1][0], 3] == img_uncropped[5, 0, 3],
+            msg="pixels under crop",
+        )
+        self.assertTrue(
+            img_uncropped[7, 3, crinfo1[2][0]] == img_uncropped[7, 3, 0],
+            msg="pixels under crop",
+        )
 
-        self.assertTrue(img_uncropped[crinfo1[0][1] - 1, 5, 3] == img_uncropped[-1, 5, 3], msg="pixels over crop")
-        self.assertTrue(img_uncropped[5, crinfo1[1][1] - 1, 3] == img_uncropped[5, -1, 3], msg="pixels over crop")
-        self.assertTrue(img_uncropped[7, 3, crinfo1[2][1] - 1] == img_uncropped[7, 3, -1], msg="pixels over crop")
+        self.assertTrue(
+            img_uncropped[crinfo1[0][1] - 1, 5, 3] == img_uncropped[-1, 5, 3],
+            msg="pixels over crop",
+        )
+        self.assertTrue(
+            img_uncropped[5, crinfo1[1][1] - 1, 3] == img_uncropped[5, -1, 3],
+            msg="pixels over crop",
+        )
+        self.assertTrue(
+            img_uncropped[7, 3, crinfo1[2][1] - 1] == img_uncropped[7, 3, -1],
+            msg="pixels over crop",
+        )
 
         # self.assertTrue(img_uncropped[crinfo1[0][1], 5 , 3] == img_uncropped[0, 5, 3], msg="pixels over crop")
         # self.assertTrue(img_uncropped[crinfo1[1][1], 5 , 3] == img_uncropped[1, 5, 3], msg="pixels over crop")
@@ -288,7 +309,6 @@ class ImageManipulationTest(unittest.TestCase):
 
         self.assertTrue(img_uncropped[-1, -1, -1] == 0)
         self.assertTrue(img_uncropped[4 + 5, 4 + 2, 3 + 1] == img_in[4, 4, 3])
-
 
     def test_resize_to_mm(self):
         data = np.random.rand(3, 4, 5)

@@ -5,7 +5,7 @@
 import numpy as np
 
 
-class SparseMatrix():
+class SparseMatrix:
     def __init__(self, ndarray):
         self.coordinates = ndarray.nonzero()
         self.shape = ndarray.shape
@@ -20,6 +20,4 @@ class SparseMatrix():
 
 
 def isSparseMatrix(obj):
-    return obj.__class__.__name__ == 'SparseMatrix'
-
-
+    return obj.__class__.__name__ == "SparseMatrix"

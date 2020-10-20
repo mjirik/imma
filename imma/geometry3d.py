@@ -4,7 +4,6 @@
 from loguru import logger
 
 
-
 import numpy as np
 from scipy.spatial.distance import cdist
 
@@ -53,11 +52,11 @@ def tube_volume(radius, length=None, pt1=None, pt2=None):
 
 
 def sphere_volume(radius):
-    return ((4. / 3.) * np.pi * radius ** 3)
+    return (4.0 / 3.0) * np.pi * radius ** 3
 
 
 def cylinder_volume(radius, length):
-    return (np.pi * radius ** 2 * length)
+    return np.pi * radius ** 2 * length
 
 
 def tube_radius_from_volume(volume, length):
@@ -67,7 +66,7 @@ def tube_radius_from_volume(volume, length):
     :param length:
     :return:
     """
-    a3 = 4. / 3. * np.pi
+    a3 = 4.0 / 3.0 * np.pi
     a2 = np.pi * length
     a1 = 0
     a0 = -volume
@@ -105,8 +104,8 @@ def show_pill_radiuses(pt1, pt2, radius, data3d, show_color=False):
     plt.subplot(121)
     plt.imshow(data2da, interpolation="none")
     # plt.colorbar()
-    circle1 = plt.Circle((pt1[1], pt1[0]), radius, color='g', fill=False)
-    circle2 = plt.Circle((pt2[1], pt2[0]), radius, color='g', fill=False)
+    circle1 = plt.Circle((pt1[1], pt1[0]), radius, color="g", fill=False)
+    circle2 = plt.Circle((pt2[1], pt2[0]), radius, color="g", fill=False)
     ax = plt.gca()
     ax.add_artist(circle1)
     ax.add_artist(circle2)
@@ -114,8 +113,8 @@ def show_pill_radiuses(pt1, pt2, radius, data3d, show_color=False):
     plt.subplot(122)
     plt.imshow(data2db, interpolation="none")
     # plt.colorbar()
-    circle1 = plt.Circle((pt1[2], pt1[0]), radius, color='g', fill=False)
-    circle2 = plt.Circle((pt2[2], pt2[0]), radius, color='g', fill=False)
+    circle1 = plt.Circle((pt1[2], pt1[0]), radius, color="g", fill=False)
+    circle2 = plt.Circle((pt2[2], pt2[0]), radius, color="g", fill=False)
     ax = plt.gca()
     ax.add_artist(circle1)
     ax.add_artist(circle2)
@@ -194,7 +193,9 @@ def get_spheres_bounding_cylinder(pt1, pt2, radius):  # , relative_step=0.5):
     # relative_step = 1.0
     # constant higher than sqrt(2)
     # sphere_radius_ratio = 1.414214
-    pts, step = get_points_in_line_segment(pt1, pt2, step=radius * relative_step, limit_step_number=1000)
+    pts, step = get_points_in_line_segment(
+        pt1, pt2, step=radius * relative_step, limit_step_number=1000
+    )
     if radius == step:
         radiuses = [radius * sphere_radius_ratio] * len(pts)
     else:
@@ -202,7 +203,9 @@ def get_spheres_bounding_cylinder(pt1, pt2, radius):  # , relative_step=0.5):
     return pts, radiuses
 
 
-def get_points_closer(node_a, node_b, delta=None, relative_length=None):  # , radius, cylinder_id):
+def get_points_closer(
+    node_a, node_b, delta=None, relative_length=None
+):  # , radius, cylinder_id):
     vector = (np.asarray(node_a) - np.asarray(node_b)).tolist()
     length = np.linalg.norm(vector)
 
@@ -215,16 +218,16 @@ def get_points_closer(node_a, node_b, delta=None, relative_length=None):  # , ra
         return None, None
 
     # mov circles to center of cylinder by size of radius because of joint
-    node_a = translate(node_a, vector,
-                       -delta)  # * self.endDistMultiplicator)
-    node_b = translate(node_b, vector,
-                       delta)  # * self.endDistMultiplicator)
+    node_a = translate(node_a, vector, -delta)  # * self.endDistMultiplicator)
+    node_b = translate(node_b, vector, delta)  # * self.endDistMultiplicator)
     node_a = np.asarray(node_a)
     node_b = np.asarray(node_b)
     return node_a, node_b
 
 
-def get_points_in_line_segment(node_a, node_b, step, limit_step_number=None):  # , radius, cylinder_id):
+def get_points_in_line_segment(
+    node_a, node_b, step, limit_step_number=None
+):  # , radius, cylinder_id):
     node_a = np.asarray(node_a)
     node_b = np.asarray(node_b)
     nodes = []
@@ -233,7 +236,7 @@ def get_points_in_line_segment(node_a, node_b, step, limit_step_number=None):  #
     dist = np.linalg.norm(vector)
     if limit_step_number is not None:
         if dist / step > limit_step_number:
-            step = dist * 1. / limit_step_number
+            step = dist * 1.0 / limit_step_number
     while dist > step:
         node_a = translate(node_a, vector, -step)
         nodes.append(node_a)
@@ -270,9 +273,11 @@ def circle(center, perp_vect, radius, element_number=10):
     for t in tl:
         # u = np.array([0, 1, 0])
         # n = np.array([1, 0, 0])
-        pt = radius * np.cos(t * 2 * np.pi) * u + \
-             radius * np.sin(t * 2 * np.pi) * np.cross(u, n) + \
-             center
+        pt = (
+            radius * np.cos(t * 2 * np.pi) * u
+            + radius * np.sin(t * 2 * np.pi) * np.cross(u, n)
+            + center
+        )
 
         pt = pt.tolist()
         pts.append(pt)
@@ -284,7 +289,7 @@ def perpendicular_vector(v):
     r""" Finds an arbitrary perpendicular vector to *v*."""
     if v[1] == 0 and v[2] == 0:
         if v[0] == 0:
-            raise ValueError('zero vector')
+            raise ValueError("zero vector")
         else:
             return np.cross(v, [0, 1, 0])
     return np.cross(v, [1, 0, 0])
@@ -314,9 +319,15 @@ def plane_fit(points):
     """
     import numpy as np
     from numpy.linalg import svd
-    points = np.reshape(points, (np.shape(points)[0], -1))  # Collapse trialing dimensions
-    assert points.shape[0] <= points.shape[1], "There are only {} points in {} dimensions.".format(points.shape[1],
-                                                                                                   points.shape[0])
+
+    points = np.reshape(
+        points, (np.shape(points)[0], -1)
+    )  # Collapse trialing dimensions
+    assert (
+        points.shape[0] <= points.shape[1]
+    ), "There are only {} points in {} dimensions.".format(
+        points.shape[1], points.shape[0]
+    )
     ctr = points.mean(axis=1)
     x = points - ctr[:, np.newaxis]
     M = np.dot(x, x.T)  # Could also use np.cov(x) here.
@@ -348,18 +359,22 @@ def is_cylinder_in_area(pt1, pt2, radius, areasize):
 
 
 def cylinder_collision(
-        pt1_mm,
-        pt2_mm,
-        radius_mm,
-        other_points,
-        other_points_radiuses=None,
-        areasize_mm=None,
-        # DIST_MAX_RADIUS_MULTIPLICATOR=1.414214, # higher than sqrt(2)
-        collision_alowed=False
+    pt1_mm,
+    pt2_mm,
+    radius_mm,
+    other_points,
+    other_points_radiuses=None,
+    areasize_mm=None,
+    # DIST_MAX_RADIUS_MULTIPLICATOR=1.414214, # higher than sqrt(2)
+    collision_alowed=False,
 ):
-    if pt1_mm is not None and is_cylinder_in_area(pt1_mm, pt2_mm, radius_mm, areasize_mm):
+    if pt1_mm is not None and is_cylinder_in_area(
+        pt1_mm, pt2_mm, radius_mm, areasize_mm
+    ):
         # line_nodes = get_points_in_line_segment(pt1_mm, pt2_mm, step)
-        line_nodes, nodes_radiuses = get_spheres_bounding_cylinder(pt1_mm, pt2_mm, radius=radius_mm)
+        line_nodes, nodes_radiuses = get_spheres_bounding_cylinder(
+            pt1_mm, pt2_mm, radius=radius_mm
+        )
         if collision_alowed:
             return False, line_nodes, nodes_radiuses
 
@@ -368,22 +383,33 @@ def cylinder_collision(
         else:
             # safe_dist2 = radius_mm * DIST_MAX_RADIUS_MULTIPLICATOR
             for node, safe_dist in zip(line_nodes, nodes_radiuses):
-                dist_closest = closest_node_dist(node, other_points, other_points_radiuses)
+                dist_closest = closest_node_dist(
+                    node, other_points, other_points_radiuses
+                )
                 if dist_closest < safe_dist:
                     return True, [], []
             return False, line_nodes, nodes_radiuses
     return True, [], []
 
 
-def closest_distance_between_lines(a0, a1, b0, b1, clamp_all=False, clamp_a0=False, clamp_a1=False, clamp_b0=False,
-                                   clamp_b1=False):
-    ''' Given two lines defined by numpy.array pairs (a0,a1,b0,b1)
+def closest_distance_between_lines(
+    a0,
+    a1,
+    b0,
+    b1,
+    clamp_all=False,
+    clamp_a0=False,
+    clamp_a1=False,
+    clamp_b0=False,
+    clamp_b1=False,
+):
+    """ Given two lines defined by numpy.array pairs (a0,a1,b0,b1)
         Return the closest points on each segment and their distance,
 
         Based on Fnord implementation. See:
         http://stackoverflow.com/questions/2824478/shortest-distance-between-two-line-segments
 
-    '''
+    """
 
     # If clampAll=True, set all clamps to True
     if clamp_all:
@@ -434,7 +460,6 @@ def closest_distance_between_lines(a0, a1, b0, b1, clamp_all=False, clamp_a0=Fal
                         return a0, b0, np.linalg.norm(a0 - b0)
                     return a0, b1, np.linalg.norm(a0 - b1)
 
-
             # Is segment B after A?
             elif d0 >= magA <= d1:
                 if clamp_a1 and clamp_b0:
@@ -446,7 +471,7 @@ def closest_distance_between_lines(a0, a1, b0, b1, clamp_all=False, clamp_a0=Fal
         return None, None, np.linalg.norm(((d0 * _A) + a0) - b0)
 
     # Lines criss-cross: Calculate the projected closest points
-    t = (b0 - a0)
+    t = b0 - a0
     detA = np.linalg.det([t, _B, cross])
     detB = np.linalg.det([t, _A, cross])
 
@@ -491,12 +516,14 @@ def closest_distance_between_lines(a0, a1, b0, b1, clamp_all=False, clamp_a0=Fal
 
 # def rotate3d
 
+
 def polar2z(r, theta):
     return r * np.exp(1j * theta)
 
 
 def z2polar(z):
     return (np.abs(z), np.angle(z))
+
 
 def cart2polar3d(cartesian):
     """ Convert 3D cartesian to 3D polar.
@@ -550,10 +577,12 @@ def cart2spher(vectors, axis_order=[0, 1, 2]):
     # print axis_order
     vectors = np.asarray(vectors)
     if vectors.shape[0] != 3:
-        import ipdb;
+        import ipdb
+
         ipdb.set_trace()
         raise ValueError(
-            'Expected vector shape is [3, N], actual shape is ' + str(vectors.shape))  # , 'foo', 'bar', 'baz')
+            "Expected vector shape is [3, N], actual shape is " + str(vectors.shape)
+        )  # , 'foo', 'bar', 'baz')
     # radius distance
     radius = np.linalg.norm(vectors, axis=0)
     normalized = vectors / radius
@@ -594,7 +623,15 @@ def rotate_vector(vectors, alpha, beta):
     return ptsr
 
 
-def random_vector_along_direction(vector=None, sigma=1.0, alpha=None, beta=None, size=1, axis_order1=[0, 1, 2], axis_order2=[0, 1, 2]):
+def random_vector_along_direction(
+    vector=None,
+    sigma=1.0,
+    alpha=None,
+    beta=None,
+    size=1,
+    axis_order1=[0, 1, 2],
+    axis_order2=[0, 1, 2],
+):
     """
     Generates unit vectors along selected direction
 
@@ -665,7 +702,9 @@ def get_bbox_corners(bbox):
     return pts
 
 
-def cylinder_collision_detection(point_a1, point_a2, radius_a, point_b1, point_b2, radius_b, bbox_a=None, bbox_b=None):
+def cylinder_collision_detection(
+    point_a1, point_a2, radius_a, point_b1, point_b2, radius_b, bbox_a=None, bbox_b=None
+):
     """
     Detects the possibility of cylinder intersection.
 gitggggglkjlkjaasdfasdf
@@ -708,11 +747,15 @@ def point_and_plane_pose(plane_point, plane_orientation, points=None, xyz=None):
     if xyz is not None:
         xyz = np.asarray(xyz)
         if points.shape[0] != 3:
-            logger.error("Wrong points shape. [3, N] expected, " + str(points.shape) + " given.")
+            logger.error(
+                "Wrong points shape. [3, N] expected, " + str(points.shape) + " given."
+            )
     elif points is not None:
         points = np.asarray(points)
         if points.shape[1] != 3:
-            logger.error("Wrong points shape. [N, 3] expected, " + str(points.shape) + " given.")
+            logger.error(
+                "Wrong points shape. [N, 3] expected, " + str(points.shape) + " given."
+            )
         xyz = points.T
     else:
         logger.error("points or xyz must be declared")
@@ -721,6 +764,7 @@ def point_and_plane_pose(plane_point, plane_orientation, points=None, xyz=None):
     z_out = (a * x + b * y + c * z + d) / (a ** 2 + b ** 2 + c ** 2) ** 0.5
 
     return z_out
+
 
 def circumscribed_polygon_radius(n, radius=1.0):
     """ Get circumscribed polygon radius.
@@ -732,17 +776,19 @@ def circumscribed_polygon_radius(n, radius=1.0):
     """
 
     theta = 2 * np.pi / n
-    radius_out = radius / np.cos(theta/2)
+    radius_out = radius / np.cos(theta / 2)
 
     return radius_out
 
+
 def inscribed_polygon_radius(radius, n):
-        """ 
+    """ 
         
         :param radius: 
         :return: 
         """
-        pass
+    pass
+
 
 def regular_polygon_area_equivalent_radius(n, radius=1.0):
     """ Compute equivalent radius to obtain same surface as circle.
@@ -758,8 +804,9 @@ def regular_polygon_area_equivalent_radius(n, radius=1.0):
 
     theta = 2 * np.pi / n
 
-    r = np.sqrt((theta * radius**2) / np.sin(theta))
+    r = np.sqrt((theta * radius ** 2) / np.sin(theta))
     return r
+
 
 def regular_polygon_perimeter_equivalent_radius(n, radius=1.0):
     """ Compute equivalent radius to obtain same perimeter as circle.
@@ -775,10 +822,11 @@ def regular_polygon_perimeter_equivalent_radius(n, radius=1.0):
 
     theta = 2 * np.pi / n
 
-    r = (theta * radius) / (2 * np.sin(theta/2.0))
+    r = (theta * radius) / (2 * np.sin(theta / 2.0))
     return r
 
-class GeometricObject():
+
+class GeometricObject:
     def __init__(self, bbox=None):
         self.bbox = bbox
 
@@ -801,10 +849,18 @@ class TubeObject(GeometricObject):
         self.bounding_point2 = self.point2 + (vector * radius)
 
     def _separable_by_bases(self, obj):
-        sep1 = self._separable_by_one_bbox_and_base(obj.bbox, self.bounding_point1, self.bounding_point2)
-        sep2 = self._separable_by_one_bbox_and_base(obj.bbox, self.bounding_point2, self.bounding_point1)
-        sep3 = self._separable_by_one_bbox_and_base(self.bbox, obj.bounding_point2, obj.bounding_point1)
-        sep4 = self._separable_by_one_bbox_and_base(self.bbox, obj.bounding_point2, obj.bounding_point1)
+        sep1 = self._separable_by_one_bbox_and_base(
+            obj.bbox, self.bounding_point1, self.bounding_point2
+        )
+        sep2 = self._separable_by_one_bbox_and_base(
+            obj.bbox, self.bounding_point2, self.bounding_point1
+        )
+        sep3 = self._separable_by_one_bbox_and_base(
+            self.bbox, obj.bounding_point2, obj.bounding_point1
+        )
+        sep4 = self._separable_by_one_bbox_and_base(
+            self.bbox, obj.bounding_point2, obj.bounding_point1
+        )
         return sep1 | sep2 | sep3 | sep4
 
     def _separable_by_one_bbox_and_base(self, bbox, base_point, other_point):
@@ -820,9 +876,13 @@ class TubeObject(GeometricObject):
         pta2 = obj.point2
         ptb1 = self.point1
         ptb2 = self.point2
-        pt1, pt2, dist = closest_distance_between_lines(pta1, pta2, ptb1, ptb2)  # , clampAll=True)
+        pt1, pt2, dist = closest_distance_between_lines(
+            pta1, pta2, ptb1, ptb2
+        )  # , clampAll=True)
         if dist > safe_dist:
-            pt1, pt2, dist = closest_distance_between_lines(pta1, pta2, ptb1, ptb2)  # , clampAll=True)
+            pt1, pt2, dist = closest_distance_between_lines(
+                pta1, pta2, ptb1, ptb2
+            )  # , clampAll=True)
             return True
         return False
 
@@ -877,9 +937,13 @@ class CylinderObject(GeometricObject):
         pta2 = obj.point2
         ptb1 = self.point1
         ptb2 = self.point2
-        pt1, pt2, dist = closest_distance_between_lines(pta1, pta2, ptb1, ptb2)  # , clampAll=True)
+        pt1, pt2, dist = closest_distance_between_lines(
+            pta1, pta2, ptb1, ptb2
+        )  # , clampAll=True)
         if dist > safe_dist:
-            pt1, pt2, dist = closest_distance_between_lines(pta1, pta2, ptb1, ptb2)  # , clampAll=True)
+            pt1, pt2, dist = closest_distance_between_lines(
+                pta1, pta2, ptb1, ptb2
+            )  # , clampAll=True)
             return True
         return False
 
@@ -905,7 +969,7 @@ class CylinderObject(GeometricObject):
         return True
 
 
-class CollisionModel():
+class CollisionModel:
     def __init__(self, areasize):
         self.collision_alowed = False
         if areasize is not None:
@@ -935,8 +999,12 @@ class CollisionModel():
         return is_in_area(node, self.areasize, radius=radius)
 
     def n_closest_end_points(self, node, n):
-        indexes, distances = n_closest_nodes(node=node, n=n, nodes=self._cylinder_end_nodes,
-                                             nodes_radius=self._cylinder_end_nodes_radiuses)
+        indexes, distances = n_closest_nodes(
+            node=node,
+            n=n,
+            nodes=self._cylinder_end_nodes,
+            nodes_radius=self._cylinder_end_nodes_radiuses,
+        )
         nodes = np.asarray(self._cylinder_end_nodes)[indexes]
         return nodes, indexes, distances
 
@@ -961,12 +1029,15 @@ class CollisionModelCombined(CollisionModel):
         CollisionModel.__init__(self, areasize)
         self.objects = []
 
-    def add_tube(self, pt1, pt2, radius,
-                                 # COLLISION_RADIUS=1.5 # higher then sqrt(2)
-                                 ):
+    def add_tube(
+        self,
+        pt1,
+        pt2,
+        radius,
+        # COLLISION_RADIUS=1.5 # higher then sqrt(2)
+    ):
         if not (
-                    self.is_point_in_area(pt1, radius) and
-                    self.is_point_in_area(pt2, radius)
+            self.is_point_in_area(pt1, radius) and self.is_point_in_area(pt2, radius)
         ):
             return True
 
@@ -974,13 +1045,15 @@ class CollisionModelCombined(CollisionModel):
         self.objects.append(new_obj)
         return False
 
-
-    def add_tube_if_no_collision(self, pt1, pt2, radius,
-                                 # COLLISION_RADIUS=1.5 # higher then sqrt(2)
-                                 ):
+    def add_tube_if_no_collision(
+        self,
+        pt1,
+        pt2,
+        radius,
+        # COLLISION_RADIUS=1.5 # higher then sqrt(2)
+    ):
         if not (
-                    self.is_point_in_area(pt1, radius) and
-                    self.is_point_in_area(pt2, radius)
+            self.is_point_in_area(pt1, radius) and self.is_point_in_area(pt2, radius)
         ):
             return True
 
@@ -997,12 +1070,15 @@ class CollisionModelCombined(CollisionModel):
 
         return collision
 
-    def add_cylinder_if_no_collision(self, pt1, pt2, radius,
-                                     # COLLISION_RADIUS=1.5 # higher then sqrt(2)
-                                     ):
+    def add_cylinder_if_no_collision(
+        self,
+        pt1,
+        pt2,
+        radius,
+        # COLLISION_RADIUS=1.5 # higher then sqrt(2)
+    ):
         if not (
-                    self.is_point_in_area(pt1, radius) and
-                    self.is_point_in_area(pt2, radius)
+            self.is_point_in_area(pt1, radius) and self.is_point_in_area(pt2, radius)
         ):
             return True
 
@@ -1026,9 +1102,13 @@ class CollisionModelSpheres(CollisionModel):
         self._cylinder_nodes = []
         self._cylinder_nodes_radiuses = []
 
-    def add_cylinder_if_no_collision(self, pt1, pt2, radius,
-                                     # COLLISION_RADIUS=1.5 # higher then sqrt(2)
-                                     ):
+    def add_cylinder_if_no_collision(
+        self,
+        pt1,
+        pt2,
+        radius,
+        # COLLISION_RADIUS=1.5 # higher then sqrt(2)
+    ):
         # TODO use geometry3.check_collision_along_line
         collision, new_nodes, nodes_radiuses = cylinder_collision(
             pt1,
@@ -1052,8 +1132,11 @@ class CollisionModelSpheres(CollisionModel):
         return len(self._cylinder_nodes)
 
     def n_closest_points(self, node, n):
-        indexes, distances = n_closest_nodes(node=node, n=n, nodes=self._cylinder_nodes,
-                                             nodes_radius=self._cylinder_nodes_radiuses)
+        indexes, distances = n_closest_nodes(
+            node=node,
+            n=n,
+            nodes=self._cylinder_nodes,
+            nodes_radius=self._cylinder_nodes_radiuses,
+        )
         nodes = np.asarray(self._cylinder_nodes)[indexes]
         return nodes, indexes, distances
-

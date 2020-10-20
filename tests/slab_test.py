@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from loguru import logger
+
 logger.enable("imma")
 
 
@@ -144,12 +145,7 @@ class ImageManipulationTest(unittest.TestCase):
         segmentation[:3, :2] = 1
         segmentation[3:, :3] = 5
 
-        slab = {
-            "label1": 1,
-            "label2": 2,
-            "label5": 5,
-            "label22": 2
-        }
+        slab = {"label1": 1, "label2": 2, "label5": 5, "label22": 2}
 
         slab = imsl.minimize_slab(slab, segmentation)
 

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from loguru import logger
+
 logger.enable("imma")
 
 
@@ -20,8 +21,6 @@ import imma.image as imim
 
 
 class LabeledTest(unittest.TestCase):
-
-
     def test_crop_from_specific_data(self):
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
@@ -40,8 +39,12 @@ class LabeledTest(unittest.TestCase):
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
         segmentation = datap["segmentation"]
-        crinfo_auto1 = imlb.crinfo_from_specific_data(segmentation, [5], with_slices=True)
-        self.assertEqual(type(data3d[crinfo_auto1]), np.ndarray, "We are able to use slices in data.")
+        crinfo_auto1 = imlb.crinfo_from_specific_data(
+            segmentation, [5], with_slices=True
+        )
+        self.assertEqual(
+            type(data3d[crinfo_auto1]), np.ndarray, "We are able to use slices in data."
+        )
 
         crinfo_auto1 = imim.fix_crinfo(crinfo_auto1, with_slices=False)
         crinfo_expected = [[0, 99], [20, 99], [45, 99]]
@@ -96,6 +99,7 @@ class LabeledTest(unittest.TestCase):
         seeds[2, 0] = 3
 
         import matplotlib.pyplot as plt
+
         # plt.imshow(seeds, interpolation="nearest")
         # plt.show()
 
@@ -126,7 +130,6 @@ class LabeledTest(unittest.TestCase):
         selection = imlb.select_labels(segmentation, "liver", slab=datap["slab"])
         self.assertGreater(np.sum(selection), 50, "select at least few pixels")
 
-
     def test_biggest_object(self):
         datap = io3d.datasets.generate_abdominal()
         data3d = datap["data3d"]
@@ -155,20 +158,25 @@ class LabeledTest(unittest.TestCase):
     @unittest.skip("This test just checks the time requirements")
     def test_biggest_object_label_timeit(self):
         import timeit
+
         t0 = timeit.timeit(
             setup="""
 import io3d.datasets
 import imma.image_manipulation as ima
 datap = io3d.datasets.generate_abdominal()
             """,
-            stmt="ima.max_area_index(datap['segmentation'], 100)", number=3)
+            stmt="ima.max_area_index(datap['segmentation'], 100)",
+            number=3,
+        )
         t1 = timeit.timeit(
             setup="""
 import io3d.datasets
 import imma.image_manipulation as ima
 datap = io3d.datasets.generate_abdominal()
             """,
-            stmt="ima.max_area_index2(datap['segmentation'], 100)", number=3)
+            stmt="ima.max_area_index2(datap['segmentation'], 100)",
+            number=3,
+        )
         # seg_biggest_i = ima.max_area_index(segmentation, 100)
         # seg_biggest_i = ima.max_area_index(segmentation, 100)
         # %timeit
@@ -178,6 +186,7 @@ datap = io3d.datasets.generate_abdominal()
         # self.assertEqual(np.array_equal(seg_biggest.shape), segmentation.shape)
         self.assertGreater(t1, t0)
         # print(t0, t1)
+
 
 def test_unique_labels_by_seeds():
     labeled = np.zeros([10, 10])
@@ -216,5 +225,4 @@ def test_fill_values():
     assert len(un) == 2
     assert filled[1, 9] == 1
     assert filled[9, 8] == 5
-    assert filled.shape==(10,10)
-
+    assert filled.shape == (10, 10)

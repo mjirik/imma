@@ -9,7 +9,9 @@ import scipy
 from scipy.ndimage import morphology
 
 from . import segmentation_labels
+
 ima = segmentation_labels
+
 
 def select_labels(segmentation, labels, slab=None):
     """
@@ -30,7 +32,7 @@ def select_labels(segmentation, labels, slab=None):
 
     ds = np.zeros(segmentation.shape, np.bool)
     for lab in labels:
-        dadd = (segmentation == lab)
+        dadd = segmentation == lab
 
         ds = ds | dadd
     if len(labels) == 0:
@@ -46,7 +48,7 @@ def get_one_biggest_object(data):
 
     maxlab = max_area_index(lab, num)
 
-    data = (lab == maxlab)
+    data = lab == maxlab
     return data
 
 
@@ -84,9 +86,9 @@ def max_area_index2(labels, num):
     return mxi
 
 
-
-
-def select_objects_by_seeds(binar_data, seeds, ignore_background_seeds=True, background_label=0):
+def select_objects_by_seeds(
+    binar_data, seeds, ignore_background_seeds=True, background_label=0
+):
     """
     Get N biggest objects from the selection or the object with seed.
 
@@ -112,7 +114,6 @@ def select_objects_by_seeds(binar_data, seeds, ignore_background_seeds=True, bac
     # ed =sed3.sed3(labeled_data, contour=output, seeds=seeds)
     # ed.show()
     return output
-
 
 
 def squeeze_labels(segmentation, try_inplace=True):
@@ -141,6 +142,7 @@ def squeeze_labels(segmentation, try_inplace=True):
         output = segmentation
     else:
         import copy
+
         output = copy.copy(segmentation)
 
     for new_level, level in enumerate(un):
@@ -173,6 +175,7 @@ def distance_segmentation(seeds, method="edt"):
 
     pass
 
+
 def crinfo_from_specific_data(data, margin=0, with_slices=False):
     """
     Create crinfo of minimum orthogonal nonzero block in input data.
@@ -182,7 +185,7 @@ def crinfo_from_specific_data(data, margin=0, with_slices=False):
     :return:
     """
     # hledáme automatický ořez, nonzero dá indexy
-    logger.debug('crinfo')
+    logger.debug("crinfo")
     logger.debug(str(margin))
     nzi = np.nonzero(data)
     logger.debug(str(nzi))
@@ -241,13 +244,14 @@ def unique_labels_by_seeds(labeled, seeds, ignored_seeds=0):
     return output
 
 
-def fill_by_nearest(segmentation:np.ndarray, unknown_value=0):
+def fill_by_nearest(segmentation: np.ndarray, unknown_value=0):
     """
     Fill unknown values by the nearest eucleidan values.
     :param segmentation: ndarray, segmentation
     :param unknown_value: how is represented unknown value
     :return:
     """
-    dst, inds = morphology.distance_transform_edt(segmentation == unknown_value, return_indices=True)
+    dst, inds = morphology.distance_transform_edt(
+        segmentation == unknown_value, return_indices=True
+    )
     return segmentation[tuple([*inds])]
-

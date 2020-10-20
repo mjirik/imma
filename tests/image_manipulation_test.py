@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from loguru import logger
+
 logger.enable("imma")
 
 
@@ -22,7 +23,6 @@ class ImageManipulationTest(unittest.TestCase):
     interactivetTest = False
 
     # interactivetTest = True
-
 
     def test_seeds_inds(self):
         datap = io3d.datasets.generate_abdominal()
@@ -89,7 +89,6 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEquals(expected_shape[0], data_out.shape[0])
         self.assertEquals(expected_shape[1], data_out.shape[1])
         self.assertEquals(expected_shape[2], data_out.shape[2])
-
 
     def test_store_to_SparseMatrix_and_back(self):
         data = np.zeros([4, 4, 4])
@@ -393,28 +392,28 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertTrue(
             img_uncropped[crinfo1[0][0], 5, 3] == img_uncropped[0, 5, 3],
             msg="pixels under crop",
-            )
+        )
         self.assertTrue(
             img_uncropped[5, crinfo1[1][0], 3] == img_uncropped[5, 0, 3],
             msg="pixels under crop",
-            )
+        )
         self.assertTrue(
             img_uncropped[7, 3, crinfo1[2][0]] == img_uncropped[7, 3, 0],
             msg="pixels under crop",
-            )
+        )
 
         self.assertTrue(
             img_uncropped[crinfo1[0][1] - 1, 5, 3] == img_uncropped[-1, 5, 3],
             msg="pixels over crop",
-            )
+        )
         self.assertTrue(
             img_uncropped[5, crinfo1[1][1] - 1, 3] == img_uncropped[5, -1, 3],
             msg="pixels over crop",
-            )
+        )
         self.assertTrue(
             img_uncropped[7, 3, crinfo1[2][1] - 1] == img_uncropped[7, 3, -1],
             msg="pixels over crop",
-            )
+        )
 
         # self.assertTrue(img_uncropped[crinfo1[0][1], 5 , 3] == img_uncropped[0, 5, 3], msg="pixels over crop")
         # self.assertTrue(img_uncropped[crinfo1[1][1], 5 , 3] == img_uncropped[1, 5, 3], msg="pixels over crop")
@@ -478,6 +477,7 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertEqual(segm[5, 5], 2)
 
         # dist, inds = scipy.in
+
 
 if __name__ == "__main__":
     unittest.main()

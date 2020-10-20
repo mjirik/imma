@@ -39,11 +39,13 @@ def get_nlabels(slab, labels, labels_meta=None, return_mode="num", return_first=
         nlabels = nlabels[0]
     return nlabels
 
+
 def get_free_numeric_label(slab, minimum=1):
     i = minimum
     while i in slab.values():
         i += 1
     return i
+
 
 def get_nlabel(slab, label, label_meta=None, return_mode="num", min_free_label=1):
     """
@@ -64,7 +66,9 @@ def get_nlabel(slab, label, label_meta=None, return_mode="num", min_free_label=1
     if type(label) == str:
         if label_meta is None:
             if label not in slab.keys():
-                free_numeric_label = get_free_numeric_label(slab, minimum=min_free_label)
+                free_numeric_label = get_free_numeric_label(
+                    slab, minimum=min_free_label
+                )
                 # free_numeric_label = np.max(list(slab.values())) + 1
                 if label == "new":
                     label = str(free_numeric_label)
@@ -120,7 +124,7 @@ def update_slab(slab, numeric_label, string_label):
     slab_tmp = {string_label: numeric_label}
     slab.update(slab_tmp)
     # slab = slab_tmp
-    logger.debug('self.slab')
+    logger.debug("self.slab")
     logger.debug(str(slab))
 
 
@@ -131,13 +135,16 @@ def add_slab_label_carefully(slab, numeric_label, string_label):
     :param string_label:
     :return:
     """
-    DeprecationWarning("Function will be removed in the future. Use get_nlabel instead.")
+    DeprecationWarning(
+        "Function will be removed in the future. Use get_nlabel instead."
+    )
     get_nlabel(slab, numeric_label, string_label)
 
 
 def add_missing_labels(segmentation, slab):
     labels = np.unique(segmentation)
     get_nlabels(slab, labels)
+
 
 def minimize_slab(slab, segmentation, remove_doubled=True):
     """
@@ -167,4 +174,3 @@ def minimize_slab(slab, segmentation, remove_doubled=True):
         slab.pop(kicki)
 
     return slab
-

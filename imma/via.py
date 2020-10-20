@@ -10,7 +10,9 @@ from matplotlib.path import Path as mplPath
 import numpy as np
 
 
-def mask_from_via_annotation(df, filename_via=None, shape=None, fn_full=None, dtype=np.uint8):
+def mask_from_via_annotation(
+    df, filename_via=None, shape=None, fn_full=None, dtype=np.uint8
+):
     """
     Generate mask from VGG Image Annotator (VIA).
 
@@ -36,7 +38,9 @@ def mask_from_via_annotation(df, filename_via=None, shape=None, fn_full=None, dt
         dfrsa = df[df["filename"] == filename_via].region_shape_attributes.values
         #         print("len and dfrsa", len(dfrsa), " | ", dfrsa)
         region_shape_attributes = json.loads(
-            df[df["filename"] == filename_via].region_shape_attributes.values[annotation_id]
+            df[df["filename"] == filename_via].region_shape_attributes.values[
+                annotation_id
+            ]
         )
 
         #     plt.imshow(img, cmap="gray")
@@ -46,9 +50,7 @@ def mask_from_via_annotation(df, filename_via=None, shape=None, fn_full=None, dt
 
         polygon = list(zip(polygon_y, polygon_x))
         poly_path = mplPath(polygon)
-        x, y = np.mgrid[
-               : shape[0], :shape[1]
-               ]
+        x, y = np.mgrid[: shape[0], : shape[1]]
         coors = np.hstack(
             (x.reshape(-1, 1), y.reshape(-1, 1))
         )  # coors.shape is (4000000,2)

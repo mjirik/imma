@@ -8,7 +8,15 @@ import scipy
 import scipy.ndimage
 
 
-def rotate(data3d, phi_deg, theta_deg=None, phi_axes=(1, 2), theta_axes=(0, 1), order=1, **kwargs):
+def rotate(
+    data3d,
+    phi_deg,
+    theta_deg=None,
+    phi_axes=(1, 2),
+    theta_axes=(0, 1),
+    order=1,
+    **kwargs,
+):
     """
     Rotate 3D data by use angle and its axes or two angles.
 
@@ -22,9 +30,13 @@ def rotate(data3d, phi_deg, theta_deg=None, phi_axes=(1, 2), theta_axes=(0, 1), 
     :return:
     """
 
-    data3d = scipy.ndimage.interpolation.rotate(data3d, phi_deg, phi_axes, order=order, **kwargs)
+    data3d = scipy.ndimage.interpolation.rotate(
+        data3d, phi_deg, phi_axes, order=order, **kwargs
+    )
     if theta_deg is not None:
-        data3d = scipy.ndimage.interpolation.rotate(data3d, theta_deg, theta_axes, order=order, **kwargs)
+        data3d = scipy.ndimage.interpolation.rotate(
+            data3d, theta_deg, theta_axes, order=order, **kwargs
+        )
     return data3d
     # segmentation = scipy.ndimage.interpolation.rotate(segmentation, angle, axes)
     # seeds = scipy.ndimage.interpolation.rotate(seeds, angle, axes)
@@ -63,8 +75,15 @@ def as_seeds_inds(seeds, datashape):
 
 
 def resize_to_shape(
-        data, shape, zoom=None, mode="constant", order=0, dtype=None, check_seeds=False,
-                        anti_aliasing=False, **kwargs
+    data,
+    shape,
+    zoom=None,
+    mode="constant",
+    order=0,
+    dtype=None,
+    check_seeds=False,
+    anti_aliasing=False,
+    **kwargs,
 ):
 
     """Resize input (gray-scale or color) data to specific shape.
@@ -76,7 +95,9 @@ def resize_to_shape(
     :param mode: default is 'nearest'
     """
 
-    if np.array_equal(data.shape, shape) or ((len(data.shape) ==  len(shape) + 1) and (np.array_equal(data.shape[:-1], shape))):
+    if np.array_equal(data.shape, shape) or (
+        (len(data.shape) == len(shape) + 1) and (np.array_equal(data.shape[:-1], shape))
+    ):
         # if output shape is same (for color the color number dimension is not checked)
         return data
 
@@ -86,7 +107,13 @@ def resize_to_shape(
         dtype = data.dtype
 
     segm_orig_scale = skimage.transform.resize(
-        data, shape, order=order, preserve_range=True, mode=mode, anti_aliasing=anti_aliasing, **kwargs
+        data,
+        shape,
+        order=order,
+        preserve_range=True,
+        mode=mode,
+        anti_aliasing=anti_aliasing,
+        **kwargs,
     )
 
     segmentation = segm_orig_scale
@@ -115,18 +142,20 @@ def fit_to_shape(segm_orig_scale, shape, dtype):
     # mport ipdb; ipdb.set_trace() # BREAKPOINT
 
     segmentation = np.zeros(shape, dtype=dtype)
-    segmentation[:shp[0], :shp[1], :shp[2]] = segm_orig_scale[:shp[0], :shp[1], :shp[2]]
+    segmentation[: shp[0], : shp[1], : shp[2]] = segm_orig_scale[
+        : shp[0], : shp[1], : shp[2]
+    ]
 
     return segmentation
 
 
 def calculate_new_shape(shape, voxelsize_mm, new_voxelsize_mm):
-    if new_voxelsize_mm == 'orig':
+    if new_voxelsize_mm == "orig":
         new_voxelsize_mm = np.asarray(voxelsize_mm)
 
-    elif new_voxelsize_mm == 'orig*2':
+    elif new_voxelsize_mm == "orig*2":
         new_voxelsize_mm = np.asarray(voxelsize_mm) * 2
-    elif new_voxelsize_mm == 'orig*4':
+    elif new_voxelsize_mm == "orig*4":
         new_voxelsize_mm = np.asarray(voxelsize_mm) * 4
     else:
         new_voxelsize_mm = np.asarray(new_voxelsize_mm)
@@ -151,9 +180,16 @@ def calculate_new_shape(shape, voxelsize_mm, new_voxelsize_mm):
     return new_shape
 
 
-def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1, anti_aliasing=False,
-                 preserve_range=True, **kwargs
-                 ):
+def resize_to_mm(
+    data3d,
+    voxelsize_mm,
+    new_voxelsize_mm,
+    mode="reflect",
+    order=1,
+    anti_aliasing=False,
+    preserve_range=True,
+    **kwargs,
+):
     """
     Function can resize (grayscale or color) data3d or segmentation to specifed voxelsize_mm
 
@@ -170,14 +206,17 @@ def resize_to_mm(data3d, voxelsize_mm, new_voxelsize_mm, mode='reflect', order=1
     new_shape = calculate_new_shape(data3d.shape, voxelsize_mm, new_voxelsize_mm)
 
     import skimage.transform
+
     # Now we need reshape  seeds and segmentation to original size
 
     data3d_res2 = skimage.transform.resize(
-        data3d, new_shape, order=order,
+        data3d,
+        new_shape,
+        order=order,
         mode=mode,
         preserve_range=preserve_range,
         anti_aliasing=anti_aliasing,
-        **kwargs
+        **kwargs,
     ).astype(data3d.dtype)
 
     return data3d_res2
@@ -191,7 +230,7 @@ def manualcrop(data):  # pragma: no cover
         logger.warning("Deprecated of pyseg_base as submodule")
         import seed_editor_qt
 
-    pyed = seed_editor_qt.QTSeedEditor(data, mode='crop')
+    pyed = seed_editor_qt.QTSeedEditor(data, mode="crop")
     pyed.exec_()
     # pyed = sed3.sed3(data)
     # pyed.show()
@@ -216,10 +255,10 @@ def crop(data, crinfo):
     """
     crinfo = fix_crinfo(crinfo)
     return data[
-           __int_or_none(crinfo[0][0]):__int_or_none(crinfo[0][1]),
-           __int_or_none(crinfo[1][0]):__int_or_none(crinfo[1][1]),
-           __int_or_none(crinfo[2][0]):__int_or_none(crinfo[2][1])
-           ]
+        __int_or_none(crinfo[0][0]) : __int_or_none(crinfo[0][1]),
+        __int_or_none(crinfo[1][0]) : __int_or_none(crinfo[1][1]),
+        __int_or_none(crinfo[2][0]) : __int_or_none(crinfo[2][1]),
+    ]
 
 
 def __int_or_none(number):
@@ -238,7 +277,7 @@ def combinecrinfo(crinfo1, crinfo2):
     crinfo = [
         [crinfo1[0][0] + crinfo2[0][0], crinfo1[0][0] + crinfo2[0][1]],
         [crinfo1[1][0] + crinfo2[1][0], crinfo1[1][0] + crinfo2[1][1]],
-        [crinfo1[2][0] + crinfo2[2][0], crinfo1[2][0] + crinfo2[2][1]]
+        [crinfo1[2][0] + crinfo2[2][0], crinfo1[2][0] + crinfo2[2][1]],
     ]
 
     return crinfo
@@ -257,7 +296,6 @@ def extend_crinfo(crinfo, shape, margin):
     slice_x = slice(d2, u2)
     crinfoo = (slice_z, slice_y, slice_x)
     return crinfoo
-
 
 
 def uncrop(data, crinfo, orig_shape, resize=False, outside_mode="constant", cval=0):
@@ -294,12 +332,12 @@ def uncrop(data, crinfo, orig_shape, resize=False, outside_mode="constant", cval
     startz = np.round(crinfo[2][0]).astype(int)
 
     data_out[
-    # np.round(crinfo[0][0]).astype(int):np.round(crinfo[0][1]).astype(int)+1,
-    # np.round(crinfo[1][0]).astype(int):np.round(crinfo[1][1]).astype(int)+1,
-    # np.round(crinfo[2][0]).astype(int):np.round(crinfo[2][1]).astype(int)+1
-    startx:startx + data.shape[0],
-    starty:starty + data.shape[1],
-    startz:startz + data.shape[2]
+        # np.round(crinfo[0][0]).astype(int):np.round(crinfo[0][1]).astype(int)+1,
+        # np.round(crinfo[1][0]).astype(int):np.round(crinfo[1][1]).astype(int)+1,
+        # np.round(crinfo[2][0]).astype(int):np.round(crinfo[2][1]).astype(int)+1
+        startx : startx + data.shape[0],
+        starty : starty + data.shape[1],
+        startz : startz + data.shape[2],
     ] = data
 
     if outside_mode == "nearest":
@@ -341,7 +379,7 @@ def uncrop(data, crinfo, orig_shape, resize=False, outside_mode="constant", cval
     return data_out
 
 
-def fix_crinfo(crinfo, to='axis', with_slices=False):
+def fix_crinfo(crinfo, to="axis", with_slices=False):
     """
     Function recognize order of crinfo and convert it to proper format.
     """
@@ -364,7 +402,7 @@ def fix_crinfo(crinfo, to='axis', with_slices=False):
             crinfo = (
                 slice(crinfo[0][0], crinfo[0][1]),
                 slice(crinfo[1][0], crinfo[1][1]),
-                slice(crinfo[2][0], crinfo[2][1])
+                slice(crinfo[2][0], crinfo[2][1]),
             )
         else:
             pass

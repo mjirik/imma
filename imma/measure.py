@@ -4,7 +4,6 @@
 from loguru import logger
 
 
-
 # import copy
 import numpy as np
 import scipy.ndimage
@@ -18,7 +17,9 @@ class CooccurrenceMatrix(object):
         self.dtype = dtype
 
     def update_cooccurrence_matrix(self, data, return_counts=True):
-        self.cooccurrence_matrix = cooccurrence_matrix(data, return_counts=return_counts)
+        self.cooccurrence_matrix = cooccurrence_matrix(
+            data, return_counts=return_counts
+        )
 
     def get(self, intensity0, intensity1):
         return self.cooccurrence_matrix[intensity0][intensity1]
@@ -49,7 +50,7 @@ def cooccurrence_matrix(data, return_counts=True):
 
     i = 0
     nbm = {}
-    it = np.nditer(data, flags=['multi_index'])
+    it = np.nditer(data, flags=["multi_index"])
     while not it.finished:
         print("iter ", i)
         i += 1
@@ -131,10 +132,9 @@ def neighbors_list(labeled_ndarray, labels=None, exclude=None):
         if bbox is not None:
             exbbox = ima.extend_crinfo(bbox, labeled_ndarray.shape, bbox_margin)
             cropped_ndarray = labeled_ndarray[exbbox]
-            object = (cropped_ndarray == label)
+            object = cropped_ndarray == label
             dilat_element = scipy.ndimage.morphology.binary_dilation(
-                object,
-                structure=np.ones([3, 3, 3])
+                object, structure=np.ones([3, 3, 3])
             )
 
             neighborhood = cropped_ndarray[dilat_element]
@@ -162,6 +162,7 @@ def get_connected_labels(neighbors_list, start_label, ignore_labels=None):
         ignore_labels = []
 
     import copy
+
     nl = copy.copy(neighbors_list)
 
     # nl.insert(0, None)
@@ -178,4 +179,3 @@ def get_connected_labels(neighbors_list, start_label, ignore_labels=None):
         processed.add(lab)
 
     return processed
-

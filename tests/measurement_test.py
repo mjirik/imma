@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from loguru import logger
-logger.enable("imma")
 
+logger.enable("imma")
 
 
 import unittest
@@ -13,7 +13,6 @@ import imma.measure
 
 
 class MeasurementTest(unittest.TestCase):
-
     def test_neigh_matrix(self):
         data = np.zeros((3, 4), dtype=int)
         data[:3, 1] = 1
@@ -21,6 +20,7 @@ class MeasurementTest(unittest.TestCase):
         data[0, 1:] = 3
 
         import imma.measure
+
         nbm = imma.measure.cooccurrence_matrix(data)
         nbm[1][0]
         self.assertEqual(nbm[1][0], nbm[0][1])
@@ -38,7 +38,9 @@ class MeasurementTest(unittest.TestCase):
         sh = data.shape
         number_of_vertical_edges = 2 * 4
         number_of_horizontal_edges = 3 * 3
-        self.assertEqual(sum, (number_of_horizontal_edges + number_of_vertical_edges) * 2)
+        self.assertEqual(
+            sum, (number_of_horizontal_edges + number_of_vertical_edges) * 2
+        )
         keys = nbm.keys()
         self.assertIn(0, keys)
         self.assertIn(1, keys)
@@ -64,7 +66,9 @@ class MeasurementTest(unittest.TestCase):
         sh = data.shape
         number_of_vertical_edges = 2 * 4
         number_of_horizontal_edges = 3 * 3
-        self.assertEqual(sum, (number_of_horizontal_edges + number_of_vertical_edges) * 2)
+        self.assertEqual(
+            sum, (number_of_horizontal_edges + number_of_vertical_edges) * 2
+        )
         keys = nbm.keys()
         self.assertIn(0, keys)
         self.assertIn(1, keys)
@@ -104,10 +108,16 @@ class MeasurementTest(unittest.TestCase):
         neighbs = imma.measure.neighbors_list(data)
         print(neighbs)
 
-        self.assertTrue(np.array_equal(neighbs[1], [0, 2, 6]), "Label 1 is negbor to [0, 2, 6]")
-        self.assertTrue(np.array_equal(neighbs[2], [0, 1]), "Label 2 is negbor to [0, 1]")
+        self.assertTrue(
+            np.array_equal(neighbs[1], [0, 2, 6]), "Label 1 is negbor to [0, 2, 6]"
+        )
+        self.assertTrue(
+            np.array_equal(neighbs[2], [0, 1]), "Label 2 is negbor to [0, 1]"
+        )
         self.assertTrue(neighbs[3] is None, "Label 4 has no neighboor")
-        self.assertTrue(np.array_equal(neighbs[6], [0, 1]), "Label 6 is negbor to [0, 1]")
+        self.assertTrue(
+            np.array_equal(neighbs[6], [0, 1]), "Label 6 is negbor to [0, 1]"
+        )
 
     def test_element_neighboors_with_selected_labels(self):
         data = np.zeros((1, 3, 4), dtype=int)
@@ -119,9 +129,13 @@ class MeasurementTest(unittest.TestCase):
         print(neighbs)
 
         # self.assertTrue(np.array_equal(neighbs[1], [0, 2, 6]), "Label 1 is negbor to [0, 2, 6]")
-        self.assertTrue(np.array_equal(neighbs[0], [0, 1]), "Label 2 is negbor to [0, 1]")
+        self.assertTrue(
+            np.array_equal(neighbs[0], [0, 1]), "Label 2 is negbor to [0, 1]"
+        )
         # self.assertTrue(neighbs[3] is None, "Label 4 has no neighboor")
-        self.assertTrue(np.array_equal(neighbs[1], [0, 1]), "Label 6 is negbor to [0, 1]")
+        self.assertTrue(
+            np.array_equal(neighbs[1], [0, 1]), "Label 6 is negbor to [0, 1]"
+        )
 
     def test_element_neighboors_with_exclude(self):
         data = np.zeros((1, 3, 4), dtype=int)
@@ -132,10 +146,16 @@ class MeasurementTest(unittest.TestCase):
         neighbs = imma.measure.neighbors_list(data, exclude=[6])
         print(neighbs)
 
-        self.assertTrue(np.array_equal(neighbs[1], [0, 2]), "Label 1 is negbor to [0, 2, 6]")
-        self.assertTrue(np.array_equal(neighbs[2], [0, 1]), "Label 2 is negbor to [0, 1]")
+        self.assertTrue(
+            np.array_equal(neighbs[1], [0, 2]), "Label 1 is negbor to [0, 2, 6]"
+        )
+        self.assertTrue(
+            np.array_equal(neighbs[2], [0, 1]), "Label 2 is negbor to [0, 1]"
+        )
         self.assertTrue(neighbs[4] is None, "Label 4 has no neighboor")
-        self.assertTrue(np.array_equal(neighbs[6], [0, 1]), "Label 6 is negbor to [0, 1]")
+        self.assertTrue(
+            np.array_equal(neighbs[6], [0, 1]), "Label 6 is negbor to [0, 1]"
+        )
 
     def test_connected_elements(self):
         data = np.zeros((1, 3, 4), dtype=int)
@@ -144,15 +164,19 @@ class MeasurementTest(unittest.TestCase):
         data[0, 0, 1:] = 6
         # neighb, bbox = imma.measure.element_neighbors(data, 1)
         neighbs = imma.measure.neighbors_list(data)
-        connected  = imma.measure.get_connected_labels(neighbs, 6, ignore_labels=[0])
+        connected = imma.measure.get_connected_labels(neighbs, 6, ignore_labels=[0])
         print(neighbs)
 
-
         # self.assertTrue(np.array_equal(neighbs[1], [0, 2, 6]), "Label 1 is negbor to [0, 2, 6]")
-        self.assertTrue(np.array_equal(neighbs[2], [0, 1]), "Label 2 is negbor to [0, 1]")
+        self.assertTrue(
+            np.array_equal(neighbs[2], [0, 1]), "Label 2 is negbor to [0, 1]"
+        )
         # self.assertTrue(neighbs[3] is None, "Label 4 has no neighboor")
-        self.assertTrue(np.array_equal(neighbs[6], [0, 1]), "Label 6 is negbor to [0, 1]")
+        self.assertTrue(
+            np.array_equal(neighbs[6], [0, 1]), "Label 6 is negbor to [0, 1]"
+        )
         self.assertTrue(np.array_equal(list(connected), [1, 2, 6]), "All connected")
+
 
 if __name__ == "__main__":
     unittest.main()

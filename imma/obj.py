@@ -10,9 +10,10 @@ from loguru import logger
 import collections
 import inspect
 
+
 def get_default_args(obj):
-    first=0
-    if ("__init__" in dir(obj)):
+    first = 0
+    if "__init__" in dir(obj):
         if inspect.isfunction(obj.__init__) or inspect.ismethod(obj.__init__):
             argspec = inspect.getargspec(obj.__init__)
             first = 1
@@ -28,4 +29,3 @@ def get_default_args(obj):
     kwargs = collections.OrderedDict(zip(kwargs_keys, defaults))
     args = args[:-ndefaults]
     return args, kwargs
-

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from loguru import logger
+
 logger.enable("imma")
 
 
@@ -101,7 +102,9 @@ class GeometryTestCase(unittest.TestCase):
         b1 = [8, -3, -5]
 
         pa1, pb1, dist1 = g3.closest_distance_between_lines(a0, a1, b0, b1)
-        pa2, pb2, dist2 = g3.closest_distance_between_lines(a0, a1, b0, b1, clamp_all=True)
+        pa2, pb2, dist2 = g3.closest_distance_between_lines(
+            a0, a1, b0, b1, clamp_all=True
+        )
 
         # self.assertAlmostEquals(dist, 0
 
@@ -121,7 +124,9 @@ class GeometryTestCase(unittest.TestCase):
         b1 = [16.05191401, 13.6576145, 3.21363215]
 
         pa1, pb1, dist1 = g3.closest_distance_between_lines(a0, a1, b0, b1)
-        pa2, pb2, dist2 = g3.closest_distance_between_lines(a0, a1, b0, b1, clamp_all=True)
+        pa2, pb2, dist2 = g3.closest_distance_between_lines(
+            a0, a1, b0, b1, clamp_all=True
+        )
 
     def test_dist_between_paralel_lines(self):
         a0 = [0, 0, 0]
@@ -137,14 +142,9 @@ class GeometryTestCase(unittest.TestCase):
         pl_pt = [0, 0, 0]
         pl_vect = [1, 0, 0]
 
-        pts = np.asarray([
-            [0, 0, 1],
-            [0, -1, 1],
-            [1, 1, 1],
-            [1, 15, 13],
-            [-1, -1, 1],
-            [-8, -1, 1]
-        ])
+        pts = np.asarray(
+            [[0, 0, 1], [0, -1, 1], [1, 1, 1], [1, 15, 13], [-1, -1, 1], [-8, -1, 1]]
+        )
 
         retval_expected = [
             0,
@@ -234,11 +234,12 @@ class GeometryTestCase(unittest.TestCase):
         cylA = g3.CylinderObject(
             [8.2932388, -0.65185999, 9.54170155],
             [8.2932388, 11.23408448, 21.42764602],
-            radius=5.691834898023455)
+            radius=5.691834898023455,
+        )
         cylB = g3.CylinderObject(
             [2.76365903, 0.86076129, 4.30361747],
             [2.76365903, 7.00253318, 10.44538936],
-            radius=7.2248666037231875
+            radius=7.2248666037231875,
         )
         collision1 = cylA.collision(cylB)
 
@@ -257,16 +258,16 @@ class GeometryTestCase(unittest.TestCase):
     def test_polygon_equivalent_radius(self):
 
         radius = 38.0
-        expected_surface = np.pi * radius**2
-        expected_perimeter = 2 * np.pi*radius
+        expected_surface = np.pi * radius ** 2
+        expected_perimeter = 2 * np.pi * radius
 
         eq_radius_perimeter = g3.regular_polygon_perimeter_equivalent_radius(4, radius)
         eq_radius_surface = g3.regular_polygon_area_equivalent_radius(4, radius)
 
         # eq_radius is
-        perimeter = 4.0 * eq_radius_perimeter * 2**0.5
+        perimeter = 4.0 * eq_radius_perimeter * 2 ** 0.5
 
-        surface = 4.0 * eq_radius_surface**2 / 2.0
+        surface = 4.0 * eq_radius_surface ** 2 / 2.0
 
         norm_rs = eq_radius_surface / radius
         norm_rp = eq_radius_perimeter / radius
@@ -275,5 +276,5 @@ class GeometryTestCase(unittest.TestCase):
         self.assertAlmostEqual(surface, expected_surface)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
