@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from loguru import logger
+logger.enable("imma")
 
 
 import unittest

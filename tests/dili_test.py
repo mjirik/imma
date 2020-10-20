@@ -3,6 +3,7 @@
 # vim:fenc=utf-8
 
 from loguru import logger
+logger.enable("imma")
 import numpy as np
 
 import unittest

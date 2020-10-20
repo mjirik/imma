@@ -1,7 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import loguru
+from loguru import logger
+logger.enable("imma")
+
 import unittest
 import pytest
 from pathlib import Path
