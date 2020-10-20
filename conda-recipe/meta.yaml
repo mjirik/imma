@@ -37,14 +37,14 @@ requirements:
   build:
     - python
     - setuptools
-    - numpy
+    - numpy >=1.12
     - scipy
     - scikit-image
     - loguru
 
   run:
     - python
-    - numpy
+    - numpy >=1.12
     - scipy
     - scikit-image
     - loguru
