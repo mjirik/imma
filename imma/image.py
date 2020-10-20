@@ -82,7 +82,7 @@ def resize_to_shape(
 
     import skimage.transform
 
-    if dtype is "orig":
+    if dtype == "orig":
         dtype = data.dtype
 
     segm_orig_scale = skimage.transform.resize(
@@ -121,12 +121,12 @@ def fit_to_shape(segm_orig_scale, shape, dtype):
 
 
 def calculate_new_shape(shape, voxelsize_mm, new_voxelsize_mm):
-    if new_voxelsize_mm is 'orig':
+    if new_voxelsize_mm == 'orig':
         new_voxelsize_mm = np.asarray(voxelsize_mm)
 
-    elif new_voxelsize_mm is 'orig*2':
+    elif new_voxelsize_mm == 'orig*2':
         new_voxelsize_mm = np.asarray(voxelsize_mm) * 2
-    elif new_voxelsize_mm is 'orig*4':
+    elif new_voxelsize_mm == 'orig*4':
         new_voxelsize_mm = np.asarray(voxelsize_mm) * 4
     else:
         new_voxelsize_mm = np.asarray(new_voxelsize_mm)

@@ -157,7 +157,7 @@ def distance_segmentation(seeds, method="edt"):
     The `distance_transform_edt` is used if is set to "edt"
     :return:
     """
-    if method is "edt":
+    if method == "edt":
         dst_transform = scipy.ndimage.distance_transform_edt
     else:
         dst_transform = method
