@@ -6,6 +6,8 @@ from loguru import logger
 import numpy as np
 import scipy
 import scipy.ndimage
+from numbers import Number
+from typing import Optional
 
 
 def rotate(
@@ -408,3 +410,41 @@ def fix_crinfo(crinfo, to="axis", with_slices=False):
             pass
 
     return crinfo
+
+
+def window(
+        data3d:np.ndarray,
+        vmin:Optional[Number]=None,
+        vmax:Optional[Number]=None,
+        center:Optional[Number]=None,
+        width:Optional[Number]=None,
+        vmin_out:Optional[Number]=0,
+        vmax_out:Optional[Number]=255,
+        dtype=np.uint8):
+    """
+    Rescale input ndarray and trim the outlayers. Used for image intensity windowing.
+
+    :param data3d: ndarray with numbers
+    :param vmin: minimal input value. Skipped if center and width is given.
+    :param vmax: maximal input value. Skipped if center and width is given.
+    :param center: Window center
+    :param width: Window width
+    :param vmin_out: Output mapping minimal value
+    :param vmax_out: Output mapping maximal value
+    :param dtype: Output dtype
+    :return:
+    """
+    if width and center:
+        vmin = center - (width / 2.)
+        vmax = center + (width / 2.)
+
+    logger.debug(f"vmin={vmin}, vmax={vmax}")
+    k = float(vmax_out - vmin_out) / (vmax - vmin)
+    q = vmax_out - k * vmax
+    logger.debug(f"k={k}, q={q}")
+    data3d_out = data3d * k + q
+
+    data3d_out[data3d_out > vmax_out] = vmax_out
+    data3d_out[data3d_out < vmin_out] = vmin_out
+
+    return data3d_out.astype(dtype)

@@ -5,6 +5,7 @@
 ## 0.17
 
 * [Added] Make mask from VIA annotation
+* [Added] Function for image intensity window
 
 ## 0.16
 

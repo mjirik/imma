@@ -336,6 +336,18 @@ class ImageManipulationTest(unittest.TestCase):
         self.assertGreaterEqual(np.max(data3d), np.max(data3d_rot))
 
 
+def test_window():
+    data3d = np.array([
+        [-10, -5],
+        [1, 15]
+    ])
+    dw = ima.window(data3d, center=5, width=20, vmin_out=0, vmax_out=10, dtype=float)
+    assert dw[0,0] == 0
+    assert dw[0,1] == 0
+    assert dw[1,0] == 3
+    assert dw[1,1] == 10
+
+
 def make_color_image():
     rgbimg = np.zeros([10, 10, 3], dtype=np.uint8)
     rgbimg[:3, :3, :] = 255
