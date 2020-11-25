@@ -359,7 +359,7 @@ def uncrop(data, crinfo, orig_shape, resize=False, outside_mode="constant", cval
                 slices = [slice(None), slice(None), slice(None)]
                 slices[ax] = slice(None, start)
                 # data_out[start + data.shape[ax] : , :, :] = tile0
-                data_out[slices] = tile0
+                data_out[tuple(slices)] = tile0
                 # plt.imshow(np.squeeze(repeated_slice))
                 # plt.show()
 
@@ -374,7 +374,7 @@ def uncrop(data, crinfo, orig_shape, resize=False, outside_mode="constant", cval
                 slices = [slice(None), slice(None), slice(None)]
                 slices[ax] = slice(start + data.shape[ax], None)
                 # data_out[start + data.shape[ax] : , :, :] = tile0
-                data_out[slices] = tile0
+                data_out[tuple(slices)] = tile0
                 # plt.imshow(np.squeeze(repeated_slice))
                 # plt.show()
 

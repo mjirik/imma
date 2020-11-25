@@ -170,7 +170,7 @@ def distance_segmentation(seeds, method="edt"):
     for one_ax in inds:
         lin_inds.append(one_ax.ravel())
 
-    segm = seeds[lin_inds].reshape(seeds.shape)
+    segm = seeds[tuple(lin_inds)].reshape(seeds.shape)
     return segm
 
     pass
