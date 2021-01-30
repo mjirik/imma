@@ -1,4 +1,4 @@
-__version__ = "0.17.5"
+__version__ = "0.18.0"
 from loguru import logger
 
 logger.disable("imma")
