@@ -44,7 +44,6 @@ import scipy
 # import traceback
 
 # ----------------- my scripts --------
-import sed3
 # import dcmreaddata1 as dcmr
 # import dcmreaddata as dcmr
 import argparse
@@ -134,113 +133,6 @@ def evaluate_and_write_to_file(
     # oseg.orig_segmentation)
 
 
-def eval_all_from_dataset_metadata(inputdata, visualization=False,
-                                   special_evaluation_function=None):
-    """
-    set metadata
-    """
-    evaluation_all = {
-        'file1': [],
-        'file2': [],
-        'volume1_mm3': [],
-        'volume2_mm3': [],
-        'err1_mm3': [],
-        'err2_mm3': [],
-        'err1_percent': [],
-        'err2_percent': [],
-        'voe': [],
-        'vd': [],
-        'avgd': [],
-        'rmsd': [],
-        'processing_time': [],
-        'organ_interactivity_counter': [],
-        'maxd': []
-
-    }
-    from io3d import misc
-    for i in range(0, len(inputdata['data'])):
-
-        reader = datareader.DataReader()
-        data3d_a_path = os.path.join(inputdata['basedir'],
-                                     inputdata['data'][i]['sliverseg'])
-        data3d_a, metadata_a = reader.Get3DData(data3d_a_path, dataplus_format=False)
-        print("inputdata ", list(inputdata['data'][i].values()))
-        try:
-            # if there is defined overlay
-            data3d_a = reader.get_overlay()[inputdata['data'][i][
-                'overlay_number']]
-            logger.info('overlay loaded')
-            print('overlay loaded')
-        except:
-            logger.debug("overlay not loaded")
-            pass
-
-        logger.debug('data A shape ' + str(data3d_a.shape))
-
-        data3d_b_path = os.path.join(inputdata['basedir'],
-                                     inputdata['data'][i]['ourseg'])
-        obj_b = misc.obj_from_file(data3d_b_path, filetype='pickle')
-        # data_b, metadata_b = reader.Get3DData(data3d_b_path)
-
-        if 'crinfo' in obj_b.keys():
-
-            data3d_b = image_manipulation.uncrop(obj_b['segmentation'],
-                                    obj_b['crinfo'], data3d_a.shape)
-        else:
-            data3d_b = obj_b['segmentation']
-
-        # import pdb; pdb.set_trace()
-        # data3d_a = (data3d_a > 1024).astype(np.int8)
-        data3d_a = (data3d_a > 0).astype(np.int8)
-        data3d_b = (data3d_b > 0).astype(np.int8)
-
-        if visualization:
-            pyed = sed3.sed3(data3d_a,  # + (4 * data3d_b)
-                             contour=data3d_b)
-            pyed.show()
-
-        evaluation_one = compare_volumes(data3d_a, data3d_b,
-                                         metadata_a['voxelsize_mm'])
-        if special_evaluation_function is not None:
-            evaluation_one.update(
-                special_evaluation_function(
-                    data3d_a, data3d_b, metadata_a['voxelsize_mm']
-                ))
-        evaluation_all['file1'].append(data3d_a_path)
-        evaluation_all['file2'].append(data3d_b_path)
-        for key in evaluation_one.keys():
-            if key not in evaluation_all.keys():
-                evaluation_all[key] = []
-
-            evaluation_all[key].append(evaluation_one[key])
-        # evaluation_all['volume1_mm3'].append(evaluation_one['volume1_mm3'])
-        # evaluation_all['volume2_mm3'].append(evaluation_one['volume2_mm3'])
-        # evaluation_all['err1_mm3'].append(evaluation_one['err1_mm3'])
-        # evaluation_all['err2_mm3'].append(evaluation_one['err2_mm3'])
-        # evaluation_all['err1_percent'].append(evaluation_one['err1_percent'])
-        # evaluation_all['err2_percent'].append(evaluation_one['err2_percent'])
-        # evaluation_all['voe'].append(evaluation_one['voe'])
-        # evaluation_all['vd'].append(evaluation_one['vd'])
-        # evaluation_all['avgd'].append(evaluation_one['avgd'])
-        # evaluation_all['rmsd'].append(evaluation_one['rmsd'])
-        # evaluation_all['maxd'].append(evaluation_one['maxd'])
-        if 'processing_time' in obj_b.keys():
-            # this is only for compatibility with march2014 data
-            processing_time = obj_b['processing_time']
-            organ_interactivity_counter = obj_b['organ_interactivity_counter']
-        else:
-            try:
-                processing_time = obj_b['processing_information']['organ_segmentation']['processing_time']  # noqa
-                organ_interactivity_counter = obj_b['processing_information']['organ_segmentation'][
-                    'organ_interactivity_counter']  # noqa
-            except:
-                processing_time = 0
-                organ_interactivity_counter = 0
-        evaluation_all['processing_time'].append(processing_time)
-        evaluation_all['organ_interactivity_counter'].append(
-            organ_interactivity_counter)
-
-    return evaluation_all
 
 
 def compare_volumes_boundingbox(vol1, vol2, voxelsize_mm):
@@ -459,51 +351,6 @@ def _get_border(image3d):
     return conv
 
 
-def write_csv(data, filename='20130812_liver_volumetry.csv'):
-    logger.debug(filename)
-    import csv
-
-    if sys.version_info.major == 2:
-        open_mode = "wb"
-    else:
-        open_mode = "w"
-    with open(filename, open_mode) as csvfile:
-    # with open(filename, 'wb') as csvfile:
-        writer = csv.writer(
-            csvfile,
-            delimiter=';',
-            quotechar='"',
-            quoting=csv.QUOTE_MINIMAL
-        )
-        write_sum_to_csv(data, writer)
-        for label in data:
-            writer.writerow([label] + data[label])
-            # spamwriter.writerow(['Spam', 'Lovely Spam', 'Wonderful Spam'])
-
-# def csv_example():
-#     import csv
-#     with open('eggs.csv', 'w', newline='') as csvfile:
-#         spamwriter = csv.writer(csvfile, delimiter=' ',
-#                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
-#         spamwriter.writerow(['Spam'] * 5 + ['Baked Beans'])
-#         spamwriter.writerow(['Spam', 'Lovely Spam', 'Wonderful Spam'])
-
-def write_sum_to_csv(evaluation, writer):
-    avg, var = make_sum(evaluation)
-    key = list(evaluation.keys())
-    _write_row([' - '] + key, writer)
-    _write_row(['var'] + var, writer)
-    _write_row(['avg'] + avg, writer)
-    _write_row([], writer)
-
-def _write_row(row_list, writer):
-    row_list_utf8 = prepare_row(row_list)
-    writer.writerow(row_list_utf8)
-
-def prepare_row(row_list):
-    return row_list
-
-
 def sliver_overall_score_for_one_couple(score):
     """
     Computes overall score:
@@ -631,6 +478,47 @@ def make_sum(evaluation):
         var.append(vari)
     return avg, var
 
+#### ---------------------- this will be moved into io3d or lisa
+
+def write_csv(data, filename='20130812_liver_volumetry.csv'):
+    logger.debug(filename)
+    import csv
+
+    if sys.version_info.major == 2:
+        open_mode = "wb"
+    else:
+        open_mode = "w"
+    with open(filename, open_mode) as csvfile:
+        # with open(filename, 'wb') as csvfile:
+        writer = csv.writer(
+            csvfile,
+            delimiter=';',
+            quotechar='"',
+            quoting=csv.QUOTE_MINIMAL
+        )
+        write_sum_to_csv(data, writer)
+        for label in data:
+            writer.writerow([label] + data[label])
+            # spamwriter.writerow(['Spam', 'Lovely Spam', 'Wonderful Spam'])
+
+
+def write_sum_to_csv(evaluation, writer):
+    avg, var = make_sum(evaluation)
+    key = list(evaluation.keys())
+    _write_row([' - '] + key, writer)
+    _write_row(['var'] + var, writer)
+    _write_row(['avg'] + avg, writer)
+    _write_row([], writer)
+
+
+def _write_row(row_list, writer):
+    row_list_utf8 = prepare_row(row_list)
+    writer.writerow(row_list_utf8)
+
+
+def prepare_row(row_list):
+    return row_list
+
 
 def main():
     # # logger = logging.getLogger()
@@ -685,6 +573,116 @@ def main():
         args.outputfile,
         args.visualization
     )
+
+
+def eval_all_from_dataset_metadata(inputdata, visualization=False,
+                                   special_evaluation_function=None):
+    """
+    set metadata
+    """
+    evaluation_all = {
+        'file1': [],
+        'file2': [],
+        'volume1_mm3': [],
+        'volume2_mm3': [],
+        'err1_mm3': [],
+        'err2_mm3': [],
+        'err1_percent': [],
+        'err2_percent': [],
+        'voe': [],
+        'vd': [],
+        'avgd': [],
+        'rmsd': [],
+        'processing_time': [],
+        'organ_interactivity_counter': [],
+        'maxd': []
+
+    }
+    from io3d import misc
+    for i in range(0, len(inputdata['data'])):
+
+        reader = datareader.DataReader()
+        data3d_a_path = os.path.join(inputdata['basedir'],
+                                     inputdata['data'][i]['sliverseg'])
+        data3d_a, metadata_a = reader.Get3DData(data3d_a_path, dataplus_format=False)
+        print("inputdata ", list(inputdata['data'][i].values()))
+        try:
+            # if there is defined overlay
+            data3d_a = reader.get_overlay()[inputdata['data'][i][
+                'overlay_number']]
+            logger.info('overlay loaded')
+            print('overlay loaded')
+        except:
+            logger.debug("overlay not loaded")
+            pass
+
+        logger.debug('data A shape ' + str(data3d_a.shape))
+
+        data3d_b_path = os.path.join(inputdata['basedir'],
+                                     inputdata['data'][i]['ourseg'])
+        obj_b = misc.obj_from_file(data3d_b_path, filetype='pickle')
+        # data_b, metadata_b = reader.Get3DData(data3d_b_path)
+
+        if 'crinfo' in obj_b.keys():
+
+            data3d_b = image_manipulation.uncrop(obj_b['segmentation'],
+                                                 obj_b['crinfo'], data3d_a.shape)
+        else:
+            data3d_b = obj_b['segmentation']
+
+        # import pdb; pdb.set_trace()
+        # data3d_a = (data3d_a > 1024).astype(np.int8)
+        data3d_a = (data3d_a > 0).astype(np.int8)
+        data3d_b = (data3d_b > 0).astype(np.int8)
+
+        if visualization:
+            import sed3
+            pyed = sed3.sed3(data3d_a,  # + (4 * data3d_b)
+                             contour=data3d_b)
+            pyed.show()
+
+        evaluation_one = compare_volumes(data3d_a, data3d_b,
+                                         metadata_a['voxelsize_mm'])
+        if special_evaluation_function is not None:
+            evaluation_one.update(
+                special_evaluation_function(
+                    data3d_a, data3d_b, metadata_a['voxelsize_mm']
+                ))
+        evaluation_all['file1'].append(data3d_a_path)
+        evaluation_all['file2'].append(data3d_b_path)
+        for key in evaluation_one.keys():
+            if key not in evaluation_all.keys():
+                evaluation_all[key] = []
+
+            evaluation_all[key].append(evaluation_one[key])
+        # evaluation_all['volume1_mm3'].append(evaluation_one['volume1_mm3'])
+        # evaluation_all['volume2_mm3'].append(evaluation_one['volume2_mm3'])
+        # evaluation_all['err1_mm3'].append(evaluation_one['err1_mm3'])
+        # evaluation_all['err2_mm3'].append(evaluation_one['err2_mm3'])
+        # evaluation_all['err1_percent'].append(evaluation_one['err1_percent'])
+        # evaluation_all['err2_percent'].append(evaluation_one['err2_percent'])
+        # evaluation_all['voe'].append(evaluation_one['voe'])
+        # evaluation_all['vd'].append(evaluation_one['vd'])
+        # evaluation_all['avgd'].append(evaluation_one['avgd'])
+        # evaluation_all['rmsd'].append(evaluation_one['rmsd'])
+        # evaluation_all['maxd'].append(evaluation_one['maxd'])
+        if 'processing_time' in obj_b.keys():
+            # this is only for compatibility with march2014 data
+            processing_time = obj_b['processing_time']
+            organ_interactivity_counter = obj_b['organ_interactivity_counter']
+        else:
+            try:
+                processing_time = obj_b['processing_information']['organ_segmentation']['processing_time']  # noqa
+                organ_interactivity_counter = obj_b['processing_information']['organ_segmentation'][
+                    'organ_interactivity_counter']  # noqa
+            except:
+                processing_time = 0
+                organ_interactivity_counter = 0
+        evaluation_all['processing_time'].append(processing_time)
+        evaluation_all['organ_interactivity_counter'].append(
+            organ_interactivity_counter)
+
+    return evaluation_all
 
 
 def generate_input_yaml(sliver_dir, pklz_dir,
