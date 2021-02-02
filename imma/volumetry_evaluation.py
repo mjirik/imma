@@ -534,15 +534,15 @@ def sliver_score(measure, metric_type):
     slope = -1
     intercept = 100
 
-    if metric_type is 'vd':
+    if metric_type == 'vd':
         slope = -3.90625
-    elif metric_type is 'voe':
+    elif metric_type == 'voe':
         slope = -5.31914893617021
-    elif metric_type is 'avgd':
+    elif metric_type == 'avgd':
         slope = -25
-    elif metric_type is 'rmsd':
+    elif metric_type == 'rmsd':
         slope = -14.7058823529412
-    elif metric_type is 'maxd':
+    elif metric_type == 'maxd':
         slope = -1.31578947368421
 
     score = intercept + np.abs(measure) * slope
