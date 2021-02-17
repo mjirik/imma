@@ -168,11 +168,21 @@ def compare_volumes_sliver(vol1, vol2, voxelsize_mm, use_logger=False, return_di
     """
     Computes statistics from similarity of vol1 and vol2. Return the same as
     compare_volumes with additional information with sliver score
-    :param vol1:
-    :param vol2:
+    :param vol1: reference, Ground True
+    :param vol2: segmentation
     :param voxelsize_mm:
     :param use_logger:
-    :return:
+
+    :return: Dict with keys:
+    volume1_mm3: Ground True volume in [mm^3],
+    volume2_mm3: Volume of segmentation in [mm^3],
+    err1_mm3: undersegmentation,
+    err2_mm3: oversegmentation,
+    err1_percent: undersegmentation in [%],
+    err2_percent: oversegmentation in [%],
+    vd: Volume difference, negative is means smaller volume of segmentation than ground true,
+    voe: Volumetric Error,
+    avgd: Average surface difference,
     """
 
     evaluation, diff = compare_volumes(vol1, vol2, voxelsize_mm, use_logger, return_diff=True)
@@ -197,11 +207,22 @@ def compare_volumes_sliver(vol1, vol2, voxelsize_mm, use_logger=False, return_di
 
 def compare_volumes(vol1, vol2, voxelsize_mm, use_logger=False, return_diff=False):
     """
-    computes metrics, no sliver computed here, see compare_volumes_sliver
+    Computes metrics, no sliver computed here, see compare_volumes_sliver.
 
-    vol1: reference
-    vol2: segmentation
+    :param vol1: reference, Ground True
+    :param vol2: segmentation
+    :return: Dict with keys:
+    volume1_mm3: Ground True volume in [mm^3],
+    volume2_mm3: Volume of segmentation in [mm^3],
+    err1_mm3: undersegmentation,
+    err2_mm3: oversegmentation,
+    err1_percent: undersegmentation in [%],
+    err2_percent: oversegmentation in [%],
+    vd: Volume difference, negative is means smaller volume of segmentation than ground true,
+    voe: Volumetric Error,
+    avgd: Average surface difference,
     """
+
     vol1 = (vol1 > 0).astype(np.int8)
     vol2 = (vol2 > 0).astype(np.int8)
     volume1 = np.sum(vol1 > 0)
