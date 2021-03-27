@@ -337,15 +337,12 @@ class ImageManipulationTest(unittest.TestCase):
 
 
 def test_window():
-    data3d = np.array([
-        [-10, -5],
-        [1, 15]
-    ])
+    data3d = np.array([[-10, -5], [1, 15]])
     dw = ima.window(data3d, center=5, width=20, vmin_out=0, vmax_out=10, dtype=float)
-    assert dw[0,0] == 0
-    assert dw[0,1] == 0
-    assert dw[1,0] == 3
-    assert dw[1,1] == 10
+    assert dw[0, 0] == 0
+    assert dw[0, 1] == 0
+    assert dw[1, 0] == 3
+    assert dw[1, 1] == 10
 
 
 def make_color_image():

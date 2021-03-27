@@ -9,31 +9,30 @@ from imma import volumetry_evaluation as ve
 
 class VolumetryEvaluationTest(unittest.TestCase):
 
-
     # @unittest.skip("Waiting for implementation")
     def test_compare_volumes(self):
-        aa = np.zeros([6,6,6], dtype=np.uint8)
-        bb = np.zeros([6,6,6], dtype=np.uint8)
+        aa = np.zeros([6, 6, 6], dtype=np.uint8)
+        bb = np.zeros([6, 6, 6], dtype=np.uint8)
 
         aa[1:5, 1:5, 1:3] = 1
         bb[1:5, 1:3, 1:5] = 1
 
         # import lisa
-        stats = ve.compare_volumes(aa, bb, [1,1,1])
+        stats = ve.compare_volumes(aa, bb, [1, 1, 1])
         # lisa.volumetry_evaluation.compare_volumes(aa.astype(np.int8), bb.astype(np.int), [1,1,1])
         self.assertEqual(stats["dice"], 0.5)
-        self.assertAlmostEqual(stats["jaccard"], 1/3.)
-        self.assertAlmostEqual(stats["voe"], 200/3.)  # 66.666666
+        self.assertAlmostEqual(stats["jaccard"], 1 / 3.0)
+        self.assertAlmostEqual(stats["voe"], 200 / 3.0)  # 66.666666
         # self.assertTrue(False)
 
     def test_sliver_overall_score_for_one_couple(self):
 
         score = {
-            'vd': 15.5,
-            'voe': 15.6,
-            'avgd': 14.4,
-            'rmsd': 20,
-            'maxd': 10,
+            "vd": 15.5,
+            "voe": 15.6,
+            "avgd": 14.4,
+            "rmsd": 20,
+            "maxd": 10,
         }
 
         overall_score = ve.sliver_overall_score_for_one_couple(score)
@@ -51,12 +50,12 @@ class VolumetryEvaluationTest(unittest.TestCase):
         eval1 = ve.compare_volumes(vol1, vol2, voxelsize_mm)
         # print ve.sliver_score(eval1['vd'], 'vd')
 
-        self.assertAlmostEqual(eval1['vd'], 20.0)
+        self.assertAlmostEqual(eval1["vd"], 20.0)
 
         score = ve.sliver_score_one_couple(eval1)
         # score is 21.875
-        self.assertGreater(score['vd'], 20)
-        self.assertLess(score['vd'], 25)
+        self.assertGreater(score["vd"], 20)
+        self.assertLess(score["vd"], 25)
 
     def test_eval_sliver_distance_for_two_pixels_bigger_volume(self):
         """
@@ -178,8 +177,8 @@ class VolumetryEvaluationTest(unittest.TestCase):
 
         # Creating directory structure
 
-        sliver_dir = '__test_sliver_dir'
-        pklz_dir = '__test_pklz_dir'
+        sliver_dir = "__test_sliver_dir"
+        pklz_dir = "__test_pklz_dir"
 
         # d = os.path.dirname(sliver_dir)
         d = sliver_dir
@@ -195,27 +194,30 @@ class VolumetryEvaluationTest(unittest.TestCase):
         # if not os.path.exists(d):
         os.makedirs(d)
 
-        filelist1 = ['liver-seg001.mhd', 'liver-seg002.mhd',
-                     'liver-seg006.mhd']
+        filelist1 = ["liver-seg001.mhd", "liver-seg002.mhd", "liver-seg006.mhd"]
         for fl in filelist1:
-            open(os.path.join(sliver_dir, fl), 'a').close()
+            open(os.path.join(sliver_dir, fl), "a").close()
 
-        filelist2 = ['soubor_seg001to.pklz', 'soubor_seg002.pklz',
-                     'sao_seg003.pklz', 'so_seg002tre3.pklz', 'ijij.pklz']
+        filelist2 = [
+            "soubor_seg001to.pklz",
+            "soubor_seg002.pklz",
+            "sao_seg003.pklz",
+            "so_seg002tre3.pklz",
+            "ijij.pklz",
+        ]
         for fl in filelist2:
-            open(os.path.join(pklz_dir, fl), 'a').close()
+            open(os.path.join(pklz_dir, fl), "a").close()
 
         # construct yaml data
-        yamldata = ve.generate_input_yaml(
-            sliver_dir, pklz_dir)
+        yamldata = ve.generate_input_yaml(sliver_dir, pklz_dir)
 
         # assert
 
         fls0 = os.path.join(sliver_dir, filelist1[0])
         flp0 = os.path.join(pklz_dir, filelist2[0])
         # we only hope, that this will be first record
-        self.assertEqual(yamldata['data'][0]['sliverseg'], fls0)
-        self.assertEqual(yamldata['data'][0]['ourseg'], flp0)
+        self.assertEqual(yamldata["data"][0]["sliverseg"], fls0)
+        self.assertEqual(yamldata["data"][0]["ourseg"], flp0)
 
         # Clean
         # if os.path.exists(d):
@@ -228,7 +230,6 @@ class VolumetryEvaluationTest(unittest.TestCase):
         Testing Volume Difference score. Score for negative values must be
         equal. Score for far high values must be 0.
         """
-        score = ve.sliver_score([1, -1, 30, 50, 100], 'vd')
+        score = ve.sliver_score([1, -1, 30, 50, 100], "vd")
         self.assertAlmostEquals(score[0], score[1])
         self.assertEqual(score[2], 0)
-

@@ -414,14 +414,15 @@ def fix_crinfo(crinfo, to="axis", with_slices=False):
 
 
 def window(
-        data3d:np.ndarray,
-        vmin:Optional[Number]=None,
-        vmax:Optional[Number]=None,
-        center:Optional[Number]=None,
-        width:Optional[Number]=None,
-        vmin_out:Optional[Number]=0,
-        vmax_out:Optional[Number]=255,
-        dtype=np.uint8):
+    data3d: np.ndarray,
+    vmin: Optional[Number] = None,
+    vmax: Optional[Number] = None,
+    center: Optional[Number] = None,
+    width: Optional[Number] = None,
+    vmin_out: Optional[Number] = 0,
+    vmax_out: Optional[Number] = 255,
+    dtype=np.uint8,
+):
     """
     Rescale input ndarray and trim the outlayers. Used for image intensity windowing.
 
@@ -436,8 +437,8 @@ def window(
     :return:
     """
     if width and center:
-        vmin = center - (width / 2.)
-        vmax = center + (width / 2.)
+        vmin = center - (width / 2.0)
+        vmax = center + (width / 2.0)
 
     logger.debug(f"vmin={vmin}, vmax={vmax}")
     k = float(vmax_out - vmin_out) / (vmax - vmin)

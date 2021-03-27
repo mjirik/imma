@@ -40,6 +40,7 @@ from loguru import logger
 # import scipy.io
 import numpy as np
 import scipy
+
 # from scipy import sparse
 # import traceback
 
@@ -61,14 +62,14 @@ CROP_MARGIN = [20]
 
 
 def evaluate_and_write_to_file(
-        inputYamlFile,
-        directoryPklz,
-        directorySliver,
-        outputfile,
-        visualization,
-        return_dir_lists=False,
-        special_evaluation_function=None,
-        return_all_data=False
+    inputYamlFile,
+    directoryPklz,
+    directorySliver,
+    outputfile,
+    visualization,
+    return_dir_lists=False,
+    special_evaluation_function=None,
+    return_all_data=False,
 ):
     """
     Function computes yaml file (if there are given input sliver and pklz
@@ -81,24 +82,26 @@ def evaluate_and_write_to_file(
             directorySliver,
             directoryPklz,
             yaml_filename=inputYamlFile,
-            return_dir_lists=return_dir_lists
+            return_dir_lists=return_dir_lists,
         )
     from io3d import misc
+
     # input parser
     data_file = inputYamlFile
-    inputdata = misc.obj_from_file(data_file, filetype='yaml')
+    inputdata = misc.obj_from_file(data_file, filetype="yaml")
 
     evaluation_all = eval_all_from_dataset_metadata(
-        inputdata, visualization,
-        special_evaluation_function=special_evaluation_function
+        inputdata,
+        visualization,
+        special_evaluation_function=special_evaluation_function,
     )
 
     logger.debug(str(evaluation_all))
-    logger.debug('eval all')
+    logger.debug("eval all")
 
     logger.debug(make_sum(evaluation_all))
-    write_csv(evaluation_all, filename=outputfile + '.csv')
-    misc.obj_to_file(evaluation_all, outputfile + '.pkl', filetype='pkl')
+    write_csv(evaluation_all, filename=outputfile + ".csv")
+    misc.obj_to_file(evaluation_all, outputfile + ".pkl", filetype="pkl")
 
     retval = []
 
@@ -133,15 +136,13 @@ def evaluate_and_write_to_file(
     # oseg.orig_segmentation)
 
 
-
-
 def compare_volumes_boundingbox(vol1, vol2, voxelsize_mm):
 
     crinfo = image_manipulation.crinfo_from_specific_data(vol1, [20, 20, 20])
     vol1[
-    crinfo[0][0]:crinfo[0][1],
-    crinfo[1][0]:crinfo[1][1],
-    crinfo[2][0]:crinfo[2][1]
+        crinfo[0][0] : crinfo[0][1],
+        crinfo[1][0] : crinfo[1][1],
+        crinfo[2][0] : crinfo[2][1],
     ] = 1
     vol1 = (vol1 > 0).astype(np.int8)
     vol2 = (vol2 > 0).astype(np.int8)
@@ -157,14 +158,17 @@ def compare_volumes_boundingbox(vol1, vol2, voxelsize_mm):
     df2 = np.sum(df == -1) * np.prod(voxelsize_mm)
 
     evaluation = {
-        'box_err1_mm3': df1,
-        'box_err2_mm3': df2,
-        'box_err1_percent': df1 / volume_avg_mm3 * 100,
-        'box_err2_percent': df2 / volume_avg_mm3 * 100,
+        "box_err1_mm3": df1,
+        "box_err2_mm3": df2,
+        "box_err1_percent": df1 / volume_avg_mm3 * 100,
+        "box_err2_percent": df2 / volume_avg_mm3 * 100,
     }
     return evaluation
 
-def compare_volumes_sliver(vol1, vol2, voxelsize_mm, use_logger=False, return_diff=False):
+
+def compare_volumes_sliver(
+    vol1, vol2, voxelsize_mm, use_logger=False, return_diff=False
+):
     """
     Computes statistics from similarity of vol1 and vol2. Return the same as
     compare_volumes with additional information with sliver score
@@ -185,20 +189,23 @@ def compare_volumes_sliver(vol1, vol2, voxelsize_mm, use_logger=False, return_di
     avgd: Average surface difference,
     """
 
-    evaluation, diff = compare_volumes(vol1, vol2, voxelsize_mm, use_logger, return_diff=True)
+    evaluation, diff = compare_volumes(
+        vol1, vol2, voxelsize_mm, use_logger, return_diff=True
+    )
     sliver_evaluation = sliver_score_one_couple(
         evaluation,
         keys=[
-            'sliver_vd_pts',
-            'sliver_voe_pts',
-            'sliver_avgd_pts',
-            'sliver_rmsd_pts',
-            'sliver_maxd_pts'
-        ])
+            "sliver_vd_pts",
+            "sliver_voe_pts",
+            "sliver_avgd_pts",
+            "sliver_rmsd_pts",
+            "sliver_maxd_pts",
+        ],
+    )
     overall = sliver_overall_score_for_one_couple(sliver_evaluation)
 
     evaluation.update(sliver_evaluation)
-    evaluation['sliver_overall_pts'] = overall
+    evaluation["sliver_overall_pts"] = overall
     if return_diff:
         return evaluation, diff
     else:
@@ -231,34 +238,36 @@ def compare_volumes(vol1, vol2, voxelsize_mm, use_logger=False, return_diff=Fals
     volume2_mm3 = volume2 * np.prod(voxelsize_mm)
     volume_avg_mm3 = (volume1_mm3 + volume2_mm3) * 0.5
     if use_logger:
-        logger.debug('vol1 [mm3]: ' + str(volume1_mm3))
-        logger.debug('vol2 [mm3]: ' + str(volume2_mm3))
+        logger.debug("vol1 [mm3]: " + str(volume1_mm3))
+        logger.debug("vol2 [mm3]: " + str(volume2_mm3))
 
     df = vol1 - vol2
     df1 = np.sum(df == 1) * np.prod(voxelsize_mm)
     df2 = np.sum(df == -1) * np.prod(voxelsize_mm)
 
     if use_logger:
-        logger.debug('err- [mm3]: ' + str(df1) + ' err- [%]: '
-                     + str(df1 / volume_avg_mm3 * 100))
-        logger.debug('err+ [mm3]: ' + str(df2) + ' err+ [%]: '
-                     + str(df2 / volume_avg_mm3 * 100))
+        logger.debug(
+            "err- [mm3]: " + str(df1) + " err- [%]: " + str(df1 / volume_avg_mm3 * 100)
+        )
+        logger.debug(
+            "err+ [mm3]: " + str(df2) + " err+ [%]: " + str(df2 / volume_avg_mm3 * 100)
+        )
 
     # VOE[%]
     # intersection = np.sum(df != 0).astype(np.float)
     intersection = np.sum(vol1 * vol2 == 1).astype(np.float)
     union_dice = (np.sum(vol1 > 0) + np.sum(vol2 > 0)).astype(float)
     union_jaccard = np.sum(vol1 + vol2 > 0).astype(float)
-    jaccard = (intersection / union_jaccard)
+    jaccard = intersection / union_jaccard
     dice = 1 - (2 * (intersection / union_dice))
     voe = 100 * (1 - jaccard)
     if use_logger:
-        logger.debug('VOE [%]' + str(voe))
+        logger.debug("VOE [%]" + str(voe))
 
     # VD[%]
     vd = 100 * (volume2 - volume1).astype(float) / volume1.astype(float)
     if use_logger:
-        logger.debug('VD [%]' + str(vd))
+        logger.debug("VD [%]" + str(vd))
     # import pdb; pdb.set_trace()
 
     # pyed = sed3.sed3(vol1, contour=vol2)
@@ -267,23 +276,23 @@ def compare_volumes(vol1, vol2, voxelsize_mm, use_logger=False, return_diff=Fals
     # get_border(vol1)
     avgd, rmsd, maxd = distance_matrics(vol1, vol2, voxelsize_mm)
     if use_logger:
-        logger.debug('AvgD [mm]' + str(avgd))
-        logger.debug('RMSD [mm]' + str(rmsd))
-        logger.debug('MaxD [mm]' + str(maxd))
+        logger.debug("AvgD [mm]" + str(avgd))
+        logger.debug("RMSD [mm]" + str(rmsd))
+        logger.debug("MaxD [mm]" + str(maxd))
     evaluation = {
-        'volume1_mm3': volume1_mm3,
-        'volume2_mm3': volume2_mm3,
-        'err1_mm3': df1,
-        'err2_mm3': df2,
-        'err1_percent': df1 / volume_avg_mm3 * 100,
-        'err2_percent': df2 / volume_avg_mm3 * 100,
-        'vd': vd,
-        'voe': voe,
-        'avgd': avgd,
-        'rmsd': rmsd,
-        'maxd': maxd,
-        'dice': dice,
-        'jaccard': jaccard
+        "volume1_mm3": volume1_mm3,
+        "volume2_mm3": volume2_mm3,
+        "err1_mm3": df1,
+        "err2_mm3": df2,
+        "err1_percent": df1 / volume_avg_mm3 * 100,
+        "err2_percent": df2 / volume_avg_mm3 * 100,
+        "vd": vd,
+        "voe": voe,
+        "avgd": avgd,
+        "rmsd": rmsd,
+        "maxd": maxd,
+        "dice": dice,
+        "jaccard": jaccard,
     }
 
     if return_diff:
@@ -301,8 +310,7 @@ def distance_matrics(vol1, vol2, voxelsize_mm):
     """
     # crop data to reduce comutation time
     crinfo = image_manipulation.crinfo_from_specific_data(vol1 + vol2, CROP_MARGIN)
-    logger.debug(str(crinfo) + ' m1 ' + str(np.max(vol1)) +
-                 ' m2 ' + str(np.min(vol2)))
+    logger.debug(str(crinfo) + " m1 " + str(np.max(vol1)) + " m2 " + str(np.min(vol2)))
     logger.debug("crinfo " + str(crinfo))
     vol1 = image_manipulation.crop(vol1, crinfo)
     vol2 = image_manipulation.crop(vol2, crinfo)
@@ -313,12 +321,10 @@ def distance_matrics(vol1, vol2, voxelsize_mm):
     # pyed = sed3.sed3(vol1, contour=vol1)
     # pyed.show()
     b1dst = scipy.ndimage.morphology.distance_transform_edt(
-        1 - border1,
-        sampling=voxelsize_mm
+        1 - border1, sampling=voxelsize_mm
     )
     b2dst = scipy.ndimage.morphology.distance_transform_edt(
-        1 - border2,
-        sampling=voxelsize_mm
+        1 - border2, sampling=voxelsize_mm
     )
 
     dst_b1_to_b2 = border2 * b1dst
@@ -402,15 +408,15 @@ def sliver_score(measure, metric_type):
     slope = -1
     intercept = 100
 
-    if metric_type == 'vd':
+    if metric_type == "vd":
         slope = -3.90625
-    elif metric_type == 'voe':
+    elif metric_type == "voe":
         slope = -5.31914893617021
-    elif metric_type == 'avgd':
+    elif metric_type == "avgd":
         slope = -25
-    elif metric_type == 'rmsd':
+    elif metric_type == "rmsd":
         slope = -14.7058823529412
-    elif metric_type == 'maxd':
+    elif metric_type == "maxd":
         slope = -1.31578947368421
 
     score = intercept + np.abs(measure) * slope
@@ -425,19 +431,17 @@ def sliver_score(measure, metric_type):
     return score
 
 
-def sliver_score_one_couple(
-        data,
-        keys=['vd', 'voe', 'avgd', 'rmsd', 'maxd']):
+def sliver_score_one_couple(data, keys=["vd", "voe", "avgd", "rmsd", "maxd"]):
     """
     Convert data from compare_volumes() function.
     :param keys: set output keys
     """
     score = {
-        keys[0]: sliver_score(data['vd'], 'vd'),
-        keys[1]: sliver_score(data['voe'], 'voe'),
-        keys[2]: sliver_score(data['avgd'], 'avgd'),
-        keys[3]: sliver_score(data['rmsd'], 'rmsd'),
-        keys[4]: sliver_score(data['maxd'], 'maxd'),
+        keys[0]: sliver_score(data["vd"], "vd"),
+        keys[1]: sliver_score(data["voe"], "voe"),
+        keys[2]: sliver_score(data["avgd"], "avgd"),
+        keys[3]: sliver_score(data["rmsd"], "rmsd"),
+        keys[4]: sliver_score(data["maxd"], "maxd"),
     }
     return score
 
@@ -461,20 +465,21 @@ def sliverScoreAll(data):
     scoreMetrics = []
     for dat in data:
         score = {
-            'vd': sliver_score(dat['vd'], 'vd'),
-            'voe': sliver_score(dat['voe'], 'voe'),
-            'avgd': sliver_score(dat['avgd'], 'avgd'),
-            'rmsd': sliver_score(dat['rmsd'], 'rmsd'),
-            'maxd': sliver_score(dat['maxd'], 'maxd'),
+            "vd": sliver_score(dat["vd"], "vd"),
+            "voe": sliver_score(dat["voe"], "voe"),
+            "avgd": sliver_score(dat["avgd"], "avgd"),
+            "rmsd": sliver_score(dat["rmsd"], "rmsd"),
+            "maxd": sliver_score(dat["maxd"], "maxd"),
         }
         scoreAll.append(score)
 
-        metrics = [np.mean(score['vd']),
-                   np.mean(score['voe']),
-                   np.mean(score['avgd']),
-                   np.mean(score['rmsd']),
-                   np.mean(score['maxd'])
-                   ]
+        metrics = [
+            np.mean(score["vd"]),
+            np.mean(score["voe"]),
+            np.mean(score["avgd"]),
+            np.mean(score["rmsd"]),
+            np.mean(score["maxd"]),
+        ]
         scoreMetrics.append(metrics)
 
         total = np.mean(metrics)
@@ -487,8 +492,8 @@ def make_sum(evaluation):
     var = []
     avg = []
     for key in evaluation.keys():
-        avgi = 'nan'
-        vari = 'nan'
+        avgi = "nan"
+        vari = "nan"
         try:
             avgi = np.average(evaluation[key])
             vari = np.var(evaluation[key])
@@ -499,9 +504,11 @@ def make_sum(evaluation):
         var.append(vari)
     return avg, var
 
+
 #### ---------------------- this will be moved into io3d or lisa
 
-def write_csv(data, filename='20130812_liver_volumetry.csv'):
+
+def write_csv(data, filename="20130812_liver_volumetry.csv"):
     logger.debug(filename)
     import csv
 
@@ -512,10 +519,7 @@ def write_csv(data, filename='20130812_liver_volumetry.csv'):
     with open(filename, open_mode) as csvfile:
         # with open(filename, 'wb') as csvfile:
         writer = csv.writer(
-            csvfile,
-            delimiter=';',
-            quotechar='"',
-            quoting=csv.QUOTE_MINIMAL
+            csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
         )
         write_sum_to_csv(data, writer)
         for label in data:
@@ -526,9 +530,9 @@ def write_csv(data, filename='20130812_liver_volumetry.csv'):
 def write_sum_to_csv(evaluation, writer):
     avg, var = make_sum(evaluation)
     key = list(evaluation.keys())
-    _write_row([' - '] + key, writer)
-    _write_row(['var'] + var, writer)
-    _write_row(['avg'] + avg, writer)
+    _write_row([" - "] + key, writer)
+    _write_row(["var"] + var, writer)
+    _write_row(["avg"] + avg, writer)
     _write_row([], writer)
 
 
@@ -551,30 +555,49 @@ def main():
 
     # logger.debug('input params')
 
-    default_data_file = os.path.join(path_to_script,
-                                     "20130812_liver_volumetry.yaml")
+    default_data_file = os.path.join(path_to_script, "20130812_liver_volumetry.yaml")
 
     parser = argparse.ArgumentParser(
-        description='Compare two segmentation. Evaluation is similar\
+        description="Compare two segmentation. Evaluation is similar\
         to MICCAI 2007 workshop.  Metrics are described in\
-        www.sliver07.com/p7.pdf')
-    parser.add_argument('-d', '--debug', action='store_true',
-                        help='run in debug mode', default=False)
-    parser.add_argument('-si', '--sampleInput', action='store_true',
-                        help='generate sample intput data', default=False)
-    parser.add_argument('-v', '--visualization', action='store_true',
-                        help='Turn on visualization', default=False)
-    parser.add_argument('-y', '--inputYamlFile', help='input yaml file',
-                        default=default_data_file)
-    parser.add_argument('-ds', '--directorySliver',
-                        help='input SLiver directory. If this and\
-                        directoryPklz is not None, yaml file is generated',
-                        default=None)
-    parser.add_argument('-dp', '--directoryPklz', help='input pklz directory',
-                        default=None)
-    parser.add_argument('-o', '--outputfile',
-                        help='output file without extension',
-                        default='20130812_liver_volumetry')
+        www.sliver07.com/p7.pdf"
+    )
+    parser.add_argument(
+        "-d", "--debug", action="store_true", help="run in debug mode", default=False
+    )
+    parser.add_argument(
+        "-si",
+        "--sampleInput",
+        action="store_true",
+        help="generate sample intput data",
+        default=False,
+    )
+    parser.add_argument(
+        "-v",
+        "--visualization",
+        action="store_true",
+        help="Turn on visualization",
+        default=False,
+    )
+    parser.add_argument(
+        "-y", "--inputYamlFile", help="input yaml file", default=default_data_file
+    )
+    parser.add_argument(
+        "-ds",
+        "--directorySliver",
+        help="input SLiver directory. If this and\
+                        directoryPklz is not None, yaml file is generated",
+        default=None,
+    )
+    parser.add_argument(
+        "-dp", "--directoryPklz", help="input pklz directory", default=None
+    )
+    parser.add_argument(
+        "-o",
+        "--outputfile",
+        help="output file without extension",
+        default="20130812_liver_volumetry",
+    )
     args = parser.parse_args()
 
     if args.debug:
@@ -592,64 +615,67 @@ def main():
         args.directoryPklz,
         args.directorySliver,
         args.outputfile,
-        args.visualization
+        args.visualization,
     )
 
 
-def eval_all_from_dataset_metadata(inputdata, visualization=False,
-                                   special_evaluation_function=None):
+def eval_all_from_dataset_metadata(
+    inputdata, visualization=False, special_evaluation_function=None
+):
     """
     set metadata
     """
     evaluation_all = {
-        'file1': [],
-        'file2': [],
-        'volume1_mm3': [],
-        'volume2_mm3': [],
-        'err1_mm3': [],
-        'err2_mm3': [],
-        'err1_percent': [],
-        'err2_percent': [],
-        'voe': [],
-        'vd': [],
-        'avgd': [],
-        'rmsd': [],
-        'processing_time': [],
-        'organ_interactivity_counter': [],
-        'maxd': []
-
+        "file1": [],
+        "file2": [],
+        "volume1_mm3": [],
+        "volume2_mm3": [],
+        "err1_mm3": [],
+        "err2_mm3": [],
+        "err1_percent": [],
+        "err2_percent": [],
+        "voe": [],
+        "vd": [],
+        "avgd": [],
+        "rmsd": [],
+        "processing_time": [],
+        "organ_interactivity_counter": [],
+        "maxd": [],
     }
     from io3d import misc
-    for i in range(0, len(inputdata['data'])):
+
+    for i in range(0, len(inputdata["data"])):
 
         reader = datareader.DataReader()
-        data3d_a_path = os.path.join(inputdata['basedir'],
-                                     inputdata['data'][i]['sliverseg'])
+        data3d_a_path = os.path.join(
+            inputdata["basedir"], inputdata["data"][i]["sliverseg"]
+        )
         data3d_a, metadata_a = reader.Get3DData(data3d_a_path, dataplus_format=False)
-        print("inputdata ", list(inputdata['data'][i].values()))
+        print("inputdata ", list(inputdata["data"][i].values()))
         try:
             # if there is defined overlay
-            data3d_a = reader.get_overlay()[inputdata['data'][i][
-                'overlay_number']]
-            logger.info('overlay loaded')
-            print('overlay loaded')
+            data3d_a = reader.get_overlay()[inputdata["data"][i]["overlay_number"]]
+            logger.info("overlay loaded")
+            print("overlay loaded")
         except:
             logger.debug("overlay not loaded")
             pass
 
-        logger.debug('data A shape ' + str(data3d_a.shape))
+        logger.debug("data A shape " + str(data3d_a.shape))
 
-        data3d_b_path = os.path.join(inputdata['basedir'],
-                                     inputdata['data'][i]['ourseg'])
-        obj_b = misc.obj_from_file(data3d_b_path, filetype='pickle')
+        data3d_b_path = os.path.join(
+            inputdata["basedir"], inputdata["data"][i]["ourseg"]
+        )
+        obj_b = misc.obj_from_file(data3d_b_path, filetype="pickle")
         # data_b, metadata_b = reader.Get3DData(data3d_b_path)
 
-        if 'crinfo' in obj_b.keys():
+        if "crinfo" in obj_b.keys():
 
-            data3d_b = image_manipulation.uncrop(obj_b['segmentation'],
-                                                 obj_b['crinfo'], data3d_a.shape)
+            data3d_b = image_manipulation.uncrop(
+                obj_b["segmentation"], obj_b["crinfo"], data3d_a.shape
+            )
         else:
-            data3d_b = obj_b['segmentation']
+            data3d_b = obj_b["segmentation"]
 
         # import pdb; pdb.set_trace()
         # data3d_a = (data3d_a > 1024).astype(np.int8)
@@ -658,19 +684,19 @@ def eval_all_from_dataset_metadata(inputdata, visualization=False,
 
         if visualization:
             import sed3
-            pyed = sed3.sed3(data3d_a,  # + (4 * data3d_b)
-                             contour=data3d_b)
+
+            pyed = sed3.sed3(data3d_a, contour=data3d_b)  # + (4 * data3d_b)
             pyed.show()
 
-        evaluation_one = compare_volumes(data3d_a, data3d_b,
-                                         metadata_a['voxelsize_mm'])
+        evaluation_one = compare_volumes(data3d_a, data3d_b, metadata_a["voxelsize_mm"])
         if special_evaluation_function is not None:
             evaluation_one.update(
                 special_evaluation_function(
-                    data3d_a, data3d_b, metadata_a['voxelsize_mm']
-                ))
-        evaluation_all['file1'].append(data3d_a_path)
-        evaluation_all['file2'].append(data3d_b_path)
+                    data3d_a, data3d_b, metadata_a["voxelsize_mm"]
+                )
+            )
+        evaluation_all["file1"].append(data3d_a_path)
+        evaluation_all["file2"].append(data3d_b_path)
         for key in evaluation_one.keys():
             if key not in evaluation_all.keys():
                 evaluation_all[key] = []
@@ -687,30 +713,39 @@ def eval_all_from_dataset_metadata(inputdata, visualization=False,
         # evaluation_all['avgd'].append(evaluation_one['avgd'])
         # evaluation_all['rmsd'].append(evaluation_one['rmsd'])
         # evaluation_all['maxd'].append(evaluation_one['maxd'])
-        if 'processing_time' in obj_b.keys():
+        if "processing_time" in obj_b.keys():
             # this is only for compatibility with march2014 data
-            processing_time = obj_b['processing_time']
-            organ_interactivity_counter = obj_b['organ_interactivity_counter']
+            processing_time = obj_b["processing_time"]
+            organ_interactivity_counter = obj_b["organ_interactivity_counter"]
         else:
             try:
-                processing_time = obj_b['processing_information']['organ_segmentation']['processing_time']  # noqa
-                organ_interactivity_counter = obj_b['processing_information']['organ_segmentation'][
-                    'organ_interactivity_counter']  # noqa
+                processing_time = obj_b["processing_information"]["organ_segmentation"][
+                    "processing_time"
+                ]  # noqa
+                organ_interactivity_counter = obj_b["processing_information"][
+                    "organ_segmentation"
+                ][
+                    "organ_interactivity_counter"
+                ]  # noqa
             except:
                 processing_time = 0
                 organ_interactivity_counter = 0
-        evaluation_all['processing_time'].append(processing_time)
-        evaluation_all['organ_interactivity_counter'].append(
-            organ_interactivity_counter)
+        evaluation_all["processing_time"].append(processing_time)
+        evaluation_all["organ_interactivity_counter"].append(
+            organ_interactivity_counter
+        )
 
     return evaluation_all
 
 
-def generate_input_yaml(sliver_dir, pklz_dir,
-                        sliver_ext='*seg0*.mhd', pklz_ext='*0*.pklz',
-                        yaml_filename=None,
-                        return_dir_lists=False
-                        ):
+def generate_input_yaml(
+    sliver_dir,
+    pklz_dir,
+    sliver_ext="*seg0*.mhd",
+    pklz_ext="*0*.pklz",
+    yaml_filename=None,
+    return_dir_lists=False,
+):
     """
     Function pair files from different directory by numer in format g0XX.
     It is ok for seg001 and orig001 too.
@@ -721,50 +756,50 @@ def generate_input_yaml(sliver_dir, pklz_dir,
     from io3d import misc
 
     if not os.path.exists(sliver_dir):
-        raise IOError("Directory with reference data (" + sliver_dir + ") does not exists")
+        raise IOError(
+            "Directory with reference data (" + sliver_dir + ") does not exists"
+        )
     if not os.path.exists(pklz_dir):
-        raise IOError("Directory with input pklz data (" + pklz_dir + ") does not exists")
+        raise IOError(
+            "Directory with input pklz data (" + pklz_dir + ") does not exists"
+        )
 
     onlyfiles1 = glob.glob(os.path.join(sliver_dir, sliver_ext))
     onlyfiles2 = glob.glob(os.path.join(pklz_dir, pklz_ext))
     onlyfiles1.sort()
     onlyfiles2.sort()
     if len(onlyfiles1) == 0:
-        raise IOError("Directory with reference data (%s) appears to be empty" % (sliver_dir))
+        raise IOError(
+            "Directory with reference data (%s) appears to be empty" % (sliver_dir)
+        )
     if len(onlyfiles2) == 0:
         raise IOError("Directory with pklz data (%s) appears to be empty" % (pklz_dir))
 
-    logger.debug('sliver files \n' + str(onlyfiles1))
-    logger.debug('pklz files \n' + str(onlyfiles2))
+    logger.debug("sliver files \n" + str(onlyfiles1))
+    logger.debug("pklz files \n" + str(onlyfiles2))
 
     data = []
     for flns in onlyfiles1:
         base, flnsh = os.path.split(os.path.normpath(flns))
-        pattern = re.search('(g0[0-9]{2})', flnsh)
+        pattern = re.search("(g0[0-9]{2})", flnsh)
         if pattern:
             pattern = pattern.group(1)
-        logger.debug('pattern1 ' + pattern)
+        logger.debug("pattern1 " + pattern)
 
         for flnp in onlyfiles2:
             base, flnph = os.path.split(os.path.normpath(flnp))
-            pt = re.match('.*' + pattern + '.*', flnph)
+            pt = re.match(".*" + pattern + ".*", flnph)
             if pt:
-                data.append({
-                    'sliverseg': flns,
-                    'ourseg': flnp
-                })
+                data.append({"sliverseg": flns, "ourseg": flnp})
 
-    inputdata = {
-        'basedir': '',
-        'data': data
-    }
+    inputdata = {"basedir": "", "data": data}
 
     retval = []
 
     if yaml_filename is None:
         retval.append(inputdata)
     else:
-        misc.obj_to_file(inputdata, yaml_filename, filetype='yaml')
+        misc.obj_to_file(inputdata, yaml_filename, filetype="yaml")
 
     if return_dir_lists:
         retval.append(onlyfiles1)
@@ -778,33 +813,55 @@ def generate_input_yaml(sliver_dir, pklz_dir,
 
 def _sample_input_data():
     from io3d import misc
-    inputdata = {'basedir': '/home/mjirik/data/medical/',  # noqa
-                 'data': [
-                     {'sliverseg': 'data_orig/sliver07/training-part1/liver-seg001.mhd',
-                      'ourseg': 'data_processed/organ_small-liver-orig001.mhd.pkl'},  # noqa
-                     {'sliverseg': 'data_orig/sliver07/training-part1/liver-seg002.mhd',
-                      'ourseg': 'data_processed/organ_small-liver-orig002.mhd.pkl'},  # noqa
-                     {'sliverseg': 'data_orig/sliver07/training-part1/liver-seg003.mhd',
-                      'ourseg': 'data_processed/organ_small-liver-orig003.mhd.pkl'},  # noqa
-                     {'sliverseg': 'data_orig/sliver07/training-part1/liver-seg004.mhd',
-                      'ourseg': 'data_processed/organ_small-liver-orig004.mhd.pkl'},  # noqa
-                     {'sliverseg': 'data_orig/sliver07/training-part1/liver-seg005.mhd',
-                      'ourseg': 'data_processed/organ_small-liver-orig005.mhd.pkl'},  # noqa
-                     {'sliverseg': 'data_orig/sliver07/training-part2/liver-seg006.mhd',
-                      'ourseg': 'data_processed/organ_small-liver-orig006.mhd.pkl'},  # noqa
-                     {'sliverseg': 'data_orig/sliver07/training-part2/liver-seg007.mhd',
-                      'ourseg': 'data_processed/organ_small-liver-orig007.mhd.pkl'},  # noqa
-                     {'sliverseg': 'data_orig/sliver07/training-part2/liver-seg008.mhd',
-                      'ourseg': 'data_processed/organ_small-liver-orig008.mhd.pkl'},  # noqa
-                     {'sliverseg': 'data_orig/sliver07/training-part2/liver-seg009.mhd',
-                      'ourseg': 'data_processed/organ_small-liver-orig009.mhd.pkl'},  # noqa
-                 ]
-                 }
 
-    sample_data_file = os.path.join(path_to_script,
-                                    "20130812_liver_volumetry_sample.yaml")
+    inputdata = {
+        "basedir": "/home/mjirik/data/medical/",  # noqa
+        "data": [
+            {
+                "sliverseg": "data_orig/sliver07/training-part1/liver-seg001.mhd",
+                "ourseg": "data_processed/organ_small-liver-orig001.mhd.pkl",
+            },  # noqa
+            {
+                "sliverseg": "data_orig/sliver07/training-part1/liver-seg002.mhd",
+                "ourseg": "data_processed/organ_small-liver-orig002.mhd.pkl",
+            },  # noqa
+            {
+                "sliverseg": "data_orig/sliver07/training-part1/liver-seg003.mhd",
+                "ourseg": "data_processed/organ_small-liver-orig003.mhd.pkl",
+            },  # noqa
+            {
+                "sliverseg": "data_orig/sliver07/training-part1/liver-seg004.mhd",
+                "ourseg": "data_processed/organ_small-liver-orig004.mhd.pkl",
+            },  # noqa
+            {
+                "sliverseg": "data_orig/sliver07/training-part1/liver-seg005.mhd",
+                "ourseg": "data_processed/organ_small-liver-orig005.mhd.pkl",
+            },  # noqa
+            {
+                "sliverseg": "data_orig/sliver07/training-part2/liver-seg006.mhd",
+                "ourseg": "data_processed/organ_small-liver-orig006.mhd.pkl",
+            },  # noqa
+            {
+                "sliverseg": "data_orig/sliver07/training-part2/liver-seg007.mhd",
+                "ourseg": "data_processed/organ_small-liver-orig007.mhd.pkl",
+            },  # noqa
+            {
+                "sliverseg": "data_orig/sliver07/training-part2/liver-seg008.mhd",
+                "ourseg": "data_processed/organ_small-liver-orig008.mhd.pkl",
+            },  # noqa
+            {
+                "sliverseg": "data_orig/sliver07/training-part2/liver-seg009.mhd",
+                "ourseg": "data_processed/organ_small-liver-orig009.mhd.pkl",
+            },  # noqa
+        ],
+    }
+
+    sample_data_file = os.path.join(
+        path_to_script, "20130812_liver_volumetry_sample.yaml"
+    )
     # print sample_data_file, path_to_script
-    misc.obj_to_file(inputdata, sample_data_file, filetype='yaml')
+    misc.obj_to_file(inputdata, sample_data_file, filetype="yaml")
+
 
 # def voe_metric(vol1, vol2, voxelsize_mm):
 
