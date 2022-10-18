@@ -11,7 +11,11 @@ import copy
 import numpy as np
 
 import sys
-from collections import Mapping, Set, Sequence
+
+try:
+    from collections.abc import Mapping, Set, Sequence
+except ImportError as e:
+    from collections import Mapping, Set, Sequence
 
 # dual python 2/3 compatability, inspired by the "six" library
 string_types = (str) if str is bytes else (str, bytes)
