@@ -174,9 +174,9 @@ def calculate_new_shape(shape, voxelsize_mm, new_voxelsize_mm):
 
     # probably better implementation
     if len(shape) == len(voxelsize_mm):
-        new_shape = np.ceil(shape * zoom).astype(np.int)
+        new_shape = np.ceil(shape * zoom).astype(int)
     elif len(shape) == (len(voxelsize_mm) + 1):
-        new_shape = np.ceil(shape[:-1] * zoom).astype(np.int)
+        new_shape = np.ceil(shape[:-1] * zoom).astype(int)
     else:
         raise ValueError("Input shape is not compatible with given voxelsize_mm.")
 
