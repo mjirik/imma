@@ -254,8 +254,8 @@ def compare_volumes(vol1, vol2, voxelsize_mm, use_logger=False, return_diff=Fals
         )
 
     # VOE[%]
-    # intersection = np.sum(df != 0).astype(np.float)
-    intersection = np.sum(vol1 * vol2 == 1).astype(np.float)
+    # intersection = np.sum(df != 0).astype(float)
+    intersection = np.sum(vol1 * vol2 == 1).astype(float)
     union_dice = (np.sum(vol1 > 0) + np.sum(vol2 > 0)).astype(float)
     union_jaccard = np.sum(vol1 + vol2 > 0).astype(float)
     jaccard = intersection / union_jaccard
